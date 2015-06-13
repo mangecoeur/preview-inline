@@ -1,0 +1,183 @@
+// The ui-variables file is provided by base themes provided by Atom.
+//
+// See https://github.com/atom/atom-dark-ui/blob/master/styles/ui-variables.less
+// for a full listing of what's available.
+@import "ui-variables";
+
+.image-inline {
+}
+
+.image-inline.output-bubble {
+    @light-bubble-background: fadein(lighten(@syntax-background-color, 40%), 100%);
+    @dark-bubble-background: fadein(lighten(@syntax-background-color, 15%), 100%);
+    @bubble-background: contrast(@syntax-text-color, @dark-bubble-background, @light-bubble-background, 20%);
+    @button-text-color: lighten(@syntax-text-color, 20%);
+
+    position: absolute;
+    padding-left: 2px;
+    padding-right: 2px;
+    background-color: @bubble-background;
+    // border: 1px solid @bubble-background;
+    border-radius: 30px;
+    margin-left: 20px;
+    white-space: nowrap;
+
+    &.rich {
+        // background-color: transparent;
+        border: none;
+
+        &.svg {
+            background-color: white;
+        }
+
+        &.multiline {
+            // .bubble-action-panel {
+            //     display: none;
+            // }
+        }
+
+        .rich-close-button {
+            &::before {
+                color: @button-text-color;
+                display: block;
+                position: absolute;
+                top: -12px;
+                right: -12px;
+                cursor: pointer;
+                border-radius: 50%;
+                width: 1.5em;
+                height: 1.5em;
+                line-height: 1.5em;
+                text-align: center;
+                background-color: darken(@bubble-background, 10%);
+                box-shadow: 0 0 2px 0px rgba(0,0,0,0.5);
+                margin: 0;
+            }
+        }
+    }
+
+    &:not(.multiline) {
+        .bubble-output-container {
+            display: inline;
+        }
+    }
+
+    &.multiline {
+        border: none;
+        padding-right: 0px;
+        display: flex;
+        box-shadow: 0 0 3px 1px rgba(0,0,0,0.3);
+
+        .bubble-result-container {
+            font-size: @font-size * 7/8;
+        }
+    }
+
+    &.multiline:not(.rich) {
+        .bubble-action-panel {
+            display: inline-flex;
+        }
+
+        .bubble-output-container {
+            padding: 3px;
+        }
+
+        .rich-close-button::before {
+            display: none;
+        }
+    }
+
+    .rich-close-button::before {
+        display: none;
+    }
+
+    .bubble-output-container {
+        display: inline-block;
+        max-width: 500px;
+        max-height: 500px;
+        overflow: hidden;
+    }
+
+
+    .bubble-result-container {
+        position: relative;
+
+        img, svg {
+            background-color: white;
+        }
+
+        video, img, svg {
+            display: block;
+            max-width: 450px;
+            max-height: 450px;
+        }
+    }
+
+
+    .bubble-action-panel {
+        display: none;
+        flex-direction: column;
+        width: 30px;
+        background-color: darken(@bubble-background, 10%);
+        box-shadow: inset 1px 0px 1px 0px rgba(0,0,0,0.4);
+        border-radius: 0 3px 3px 0;
+
+        .action-button {
+            @separator-color: fade(darken(@bubble-background, 20%), 20%);
+            flex: none;
+
+
+            border-top: 1px solid @separator-color;
+
+            &:nth-child(1) {
+                border-top: none;
+                border-bottom: 1px solid @separator-color;
+            }
+
+            &::before {
+                width: 100%;
+                height: 30px;
+                text-align: center;
+                color: @button-text-color;
+                cursor: pointer;
+                text-align: center;
+                margin: 0;
+                line-height: 30px;
+            }
+
+        }
+
+        .padding {
+            flex: 1;
+        }
+    }
+
+    .close-button {
+        &::after {
+            color: @button-text-color;
+            display: none;
+            position: absolute;
+            top: -12px;
+            right: -12px;
+            // content: '✕';
+            cursor: pointer;
+            // border: 1px solid @close-text-color;
+            border-radius: 50%;
+            padding: 1px;
+            width: 1.5em;
+            height: 1.5em;
+            text-align: center;
+            background-color: darken(@bubble-background, 10%);
+            box-shadow: 0 0 2px 0px rgba(0,0,0,0.5);
+        }
+    }
+}
+
+.atom-repl.status-container {
+    display: inline-block;
+    cursor: pointer;
+
+    .status:hover {
+        text-decoration: underline;
+    }
+}

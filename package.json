@@ -1,0 +1,22 @@
+{
+  "name": "image-inline",
+  "main": "./lib/image-inline",
+  "version": "0.0.0",
+  "description": "A short description of your package",
+  "keywords": [
+  ],
+  "activationCommands": {
+    "atom-workspace": "image-inline:show"
+  },
+  "repository": "https://github.com/atom/image-inline",
+  "license": "MIT",
+  "engines": {
+    "atom": ">=0.174.0 <2.0.0"
+  },
+  "dependencies": {
+  },
+  "coffeelintConfig": {
+    "max_line_lneght" : 100
+  }
+
+}
