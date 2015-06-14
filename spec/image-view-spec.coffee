@@ -1,4 +1,4 @@
-ImageInlineView = require '../lib/image-inline-view'
+ImageInlineView = require '../lib/image-view'
 
 describe "ImageInlineView", ->
   it "has one valid test", ->

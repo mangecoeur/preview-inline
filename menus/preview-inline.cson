@@ -10,11 +10,11 @@
   {
     'label': 'Packages'
     'submenu': [
-      'label': 'image-inline'
+      'label': 'preview-inline'
       'submenu': [
         {
-          'label': 'Toggle'
-          'command': 'image-inline:toggle'
+          'label': 'Show'
+          'command': 'preview-inline:show'
         }
       ]
     ]

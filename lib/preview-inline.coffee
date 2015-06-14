@@ -14,27 +14,20 @@ path = require 'path'
 # make responsive (is already partly so)
 
 
-module.exports = ImageInline =
+module.exports = PreviewInline =
   imageInlineView: null
   modalPanel: null
   subscriptions: null
   markerBubbleMap: {}
 
   activate: (state) ->
-    console.log 'Loading image-inline'
-
-    # This is just from the example package layout.Actually will want many views
-    @imageInlineView = new ImageView('/Users/jonathanchambers/Pictures/gravatar.jpg')
-    @modalPanel = atom.workspace.addModalPanel({
-      item: @imageInlineView.getElement(),
-      visible: false})
+    console.log 'Loading preview-inline'
 
     @subscriptions = new CompositeDisposable
 
     # Register command that toggles this view
     @subscriptions.add atom.commands.add 'atom-workspace',
-        # 'image-inline:toggle': => @toggle(),
-        'image-inline:show': => @showUnderCursor()
+        'preview-inline:show': => @showUnderCursor()
 
     # @subscriptions.add atom.commands.add 'atom-text-editor',
     #     'image-inline:show': => @showUnderCursor()
@@ -49,26 +42,28 @@ module.exports = ImageInline =
   deactivate: ->
     @modalPanel.destroy()
     @subscriptions.dispose()
-    @imageInlineView.destroy()
+    @clearResultBubbles()
+    # @imageInlineView.destroy()
 
   serialize: ->
-    imageInlineViewState: @imageInlineView.serialize()
+    # imageInlineViewState: @imageInlineView.serialize()
 
   updateCurrentEditor: (currentPaneItem) ->
     return if not currentPaneItem? or currentPaneItem is @editor
     @editor = currentPaneItem
 
-  toggle: ->
-    console.log 'ImageInline was toggled!'
+  clearResultBubbles: ->
+    bubble.destroy() for bubble in @markerBubbleMap
+    @markerBubbleMap = {}
 
-    if @modalPanel.isVisible()
-      @modalPanel.hide()
-    else
-      @modalPanel.show()
-
+  clearBubblesOnRow: (row) ->
+    buffer = @editor.getBuffer()
+    _.forEach buffer.findMarkers({endRow: row}), (marker) =>
+      if @markerBubbleMap[marker.id]?
+        @markerBubbleMap[marker.id].destroy()
+        delete @markerBubbleMap[marker.id]
 
   showUnderCursor: () ->
-
     buffer = @editor.getBuffer()
 
     cursor = @editor.getLastCursor()
@@ -83,7 +78,15 @@ module.exports = ImageInline =
       invalidate: 'touch'
     }
 
-    imageLocation = @findImageLocation()
+    try
+      imageLocation = @findImageLocation()
+    catch error
+      # don't show the view if the image doesn't exist
+      # TODO: maybe want to display as warning instead or a placeholder
+      console.warn  error
+      atom.notifications.addWarning(error.message)
+      return null
+
 
     view = new ImageView(imageLocation)
     # view.spin(true)
@@ -110,36 +113,6 @@ module.exports = ImageInline =
         delete @markerBubbleMap[marker.id]
 
     return view
-
-
-
-  parseImageLocation: (text) ->
-    console.log(text)
-    imageLocation = @getURL(text)
-    if imageLocation == null
-      #FIXME: for now just assume that you selected only a file path...
-      # could at least check that file exists or something...
-      imageLocation = text.trim()
-      #try to parse selected text as md link
-      mdLink = @parseMarkdownLink(imageLocation)
-      if mdLink?
-        imageLocation = mdLink.location
-    console.log(imageLocation)
-
-    imageLocation = path.normalize(imageLocation)
-
-    if not path.isAbsolute(imageLocation)
-      basePath = path.dirname @editor.getPath()
-      imageLocation = path.resolve(basePath, imageLocation)
-
-    try
-      st = fs.statSync(imageLocation)
-      if not st.isFile()
-        throw new Error("no image at given location")
-    catch error
-      throw new Error("no image at given location")
-
-    return imageLocation
 
   findImageLocation: ->
     # TODO: replace this with "search around" current cursor.
@@ -170,24 +143,60 @@ module.exports = ImageInline =
           row: row
           column: 9999999)
 
-    return @parseImageLocation(text)
+    return @parseImageLocation(text, @editor.getPath())
 
+
+  parseImageLocation: (text, basePath) ->
+
+    #FIXME: for now just assume that you selected only a file path...
+    # could at least check that file exists or something...
+    imageLocation = text.trim()
+    #try to parse selected text as md link
+    mdLink = @parseMarkdownLink(imageLocation)
+    if mdLink?
+      imageLocation = mdLink.location
+
+    imageLocation = path.normalize(imageLocation)
+
+    if not path.isAbsolute(imageLocation)
+      if basePath?
+        imageLocation = path.resolve(basePath, imageLocation)
+      else
+        try
+          # it might be a URL that got interpreted as a relative path
+          imageLocation = @getURL(imageLocation)
+          return imageLocation
+        catch error
+          throw new Error(imageLocation + " is a relative path, "+
+                          "but no base directory was defined")
+    try
+      st = fs.statSync(imageLocation)
+      if not st.isFile()
+        throw new Error("no image at " + imageLocation)
+    catch error
+      # try
+      #   imageLocation = @getURL(imageLocation)
+      # catch error
+      throw new Error("no image at " + imageLocation)
+
+    return imageLocation
 
   getURL: (text) ->
     # pull a url out of a line of text
     pattern = ///
-      (https?:\/\/)?                              # protocol (optional)
+      ((https?:\/\/)?                              # protocol (optional)
       ((([a-z\d]([a-z\d-]*[a-z\d])*)\.)+[a-z]{2,}| # domain name
       ((\d{1,3}\.){3}\d{1,3}))                     # OR ip (v4) address
       (\:\d+)?(\/[-a-z\d%_.~+]*)*                  # port and path
       (\?[;&a-z\d%_.~+=-]*)?                       # query string
-      (\#[-a-z\d_]*)?$                             # fragment locater
+      (\#[-a-z\d_]*)?$)                             # fragment locater
     ///
     result =  text.match(pattern)
     if result?
+      console.log result
       return result[0]
     else
-      return null
+      throw new Error('no URL in this text')
 
   parseMarkdownLink: (text) ->
     # get the link part from  a markdown image link text
