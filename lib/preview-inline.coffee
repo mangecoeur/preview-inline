@@ -11,7 +11,6 @@ katex = require 'katex'
 # {TextEditorView} = require 'atom-space-pen-views'
 
 # TODOS for first release
-# TODO: get maths from under cursor
 # TODO: sort out bubble formatting to adjust image size and container size
 # TODO: sort out bubble formatting to stretch to contain maths
 # TODO: nice decorations - show close buttons on hover etc
@@ -43,20 +42,14 @@ module.exports = PreviewInline =
 
     # Register command that toggles this view
     @subscriptions.add atom.commands.add 'atom-workspace',
-        'preview-inline:show': => @showUnderCursor()
-        'preview-inline:show-math': => @showMath()
-
-    # @subscriptions.add atom.commands.add 'atom-text-editor',
-    #     'image-inline:show': => @showUnderCursor()
+        'preview-inline:show': => @showPreview()
+        # 'preview-inline:show-math': => @showMath()
 
     @subscriptions.add(atom.workspace.observeActivePaneItem(
       @updateCurrentEditor.bind(this)))
 
     #TODO: change editor...
     @editor = atom.workspace.getActiveTextEditor()
-    # console.log atom.views.getView(@editor)
-    # console.log katex.render('x = \frac{1}{2}', atom.views.getView(@editor))
-
 
   deactivate: ->
     @subscriptions.dispose()
@@ -82,12 +75,12 @@ module.exports = PreviewInline =
         @markerBubbleMap[marker.id].destroy()
         delete @markerBubbleMap[marker.id]
 
-  markdownHandler: () ->
+  showPreview: () ->
     #TODO: merge all of these handers
     buffer = @editor.getBuffer()
-    rootScope = @editor.getRootScope()
-
+    rootScope = @editor.getRootScopeDescriptor()
     cursor = @editor.getLastCursor()
+
     row = cursor.getBufferRow()
     lineLength = buffer.lineLengthForRow(row)
 
@@ -98,10 +91,23 @@ module.exports = PreviewInline =
         mathText = @getTextForScope(".markup.math")
         view = new MathView(mathText)
       else if scopeTools.scopeContains(scope, "markup.underline.link.gfm")
-        linkText = @getTextForScope(".markup.underline.link.gfm")
-        linkText = @parseImageLocation(linkText, path.dirname(@editor.getPath()))
-        view = new ImageView(linkText)
-
+        linkURL = @getTextForScope(".markup.underline.link.gfm")
+        # by default the gfm selection starts/ends with brakets, remove
+        # TODO refactor, cleanup, clarify
+        # TODO maybe allow you to preview link with selected text...
+        pattern = /\((.*)\)/
+        result = pattern.exec(linkURL)
+        if result == null
+          return
+        linkURL = result[1]
+        try
+          linkURL = @parseImageLocation(linkURL, path.dirname(@editor.getPath()))
+          view = new ImageView(linkURL)
+        catch error
+          # TODO: maybe want to display as a placeholder
+          console.warn  error
+          atom.notifications.addWarning(error.message)
+          return
 
       @clearBubblesOnRow(row)
 
@@ -126,45 +132,6 @@ module.exports = PreviewInline =
           marker.destroy()
           delete @markerBubbleMap[marker.id]
 
-  showMath: () ->
-    #TODO get math text function
-    # mathText = @getMathText()
-
-    # TODO catch error, show notification if no text or not renderable
-    mathText = @getMathUnderCursor()
-    mathview = new MathView(mathText)
-    element = mathview.getElement()
-
-    # TODO can be common with showUnderCursor
-    buffer = @editor.getBuffer()
-    cursor = @editor.getLastCursor()
-    row = cursor.getBufferRow()
-    lineLength = buffer.lineLengthForRow(row)
-
-    @clearBubblesOnRow(row)
-
-    marker = @editor.markBufferPosition {
-      row: row
-      column: lineLength
-    }, {
-      invalidate: 'touch'
-    }
-
-    @editor.decorateMarker marker, {
-      type: 'overlay'
-      item: element
-      position: 'tail'
-    }
-
-
-    @markerBubbleMap[marker.id] = mathview
-    marker.onDidChange (event) =>
-      console.log event
-      if not event.isValid
-        mathview.destroy()
-        marker.destroy()
-        delete @markerBubbleMap[marker.id]
-
   getTextForScope: (scopeString) ->
     buffer = @editor.getBuffer()
     range = @editor.bufferRangeForScopeAtCursor(scopeString)
@@ -183,63 +150,7 @@ module.exports = PreviewInline =
 
       throw new Error('no math selected under cursor')
 
-
-  showUnderCursor: () ->
-    buffer = @editor.getBuffer()
-    cursor = @editor.getLastCursor()
-    row = cursor.getBufferRow()
-
-    @clearBubblesOnRow(row)
-    # @clearResultBubbles()
-
-    lineLength = buffer.lineLengthForRow(row)
-
-    marker = @editor.markBufferPosition {
-      row: row
-      column: lineLength
-    }, {
-      invalidate: 'touch'
-    }
-
-    try
-      imageLocation = @findImageLocation()
-    catch error
-      # don't show the view if the image doesn't exist
-      # TODO: maybe want to display as a placeholder
-      console.warn  error
-      atom.notifications.addWarning(error.message)
-      return null
-
-
-    view = new ImageView(imageLocation)
-    # view.spin(true)
-    element = view.getElement()
-
-    lineHeight = @editor.getLineHeightInPixels()
-    topOffset = lineHeight
-    element.setAttribute('style', "top: -#{topOffset}px;")
-    # view.spinner.setAttribute('style',
-            # "width: #{lineHeight + 2}px; height: #{lineHeight - 4}px;")
-
-    @editor.decorateMarker marker, {
-      type: 'overlay'
-      item: element
-      position: 'tail'
-    }
-
-    @markerBubbleMap[marker.id] = view
-    marker.onDidChange (event) =>
-      console.log event
-      if not event.isValid
-        view.destroy()
-        marker.destroy()
-        delete @markerBubbleMap[marker.id]
-
-    return view
-
   findImageLocation: ->
-    # TODO: replace this with "search around" current cursor.
-    # TODO: add way to just select all image elements and get path, add image
     text = @editor.getSelectedText()
 
     if text != ''
@@ -266,7 +177,6 @@ module.exports = PreviewInline =
           row: row
           column: 9999999)
     return @parseImageLocation(text, path.dirname(@editor.getPath()))
-
 
   parseImageLocation: (text, basePath) ->
 

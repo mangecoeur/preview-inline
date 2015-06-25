@@ -1,7 +1,7 @@
 arrayEqual = (a, b) ->
   a.length is b.length and a.every (elem, i) -> elem is b[i]
 
-scopeEqual: (scopeOne, scopeTwo) ->
+scopeEqual = (scopeOne, scopeTwo) ->
   # TODO: handle mixed string/array scopes
   if typeof scopeOne is 'string' and typeof scopeTwo is 'string'
     return scopeOne == scopeTwo
@@ -17,7 +17,7 @@ scopeEqual: (scopeOne, scopeTwo) ->
 
   return arrayEqual(arrayOne, arrayTwo)
 
-scopeContains: (outerScope, innerScope) ->
+scopeContains = (outerScope, innerScope) ->
   if typeof outerScope is 'string' and typeof outerScope is 'string'
     return outerScope.includes(innerScope)
 
