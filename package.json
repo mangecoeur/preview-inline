@@ -3,17 +3,17 @@
   "main": "./lib/preview-inline",
   "version": "0.0.0",
   "description": "A short description of your package",
-  "keywords": [
-  ],
+  "keywords": [],
   "repository": "https://github.com/mangecoeur/preview-inline",
   "license": "MIT",
   "engines": {
     "atom": ">=0.174.0 <2.0.0"
   },
   "dependencies": {
+    "MathJax-node": "^0.3.0",
+    "katex": "^0.4.3"
   },
   "coffeelintConfig": {
-    "max_line_lneght" : 100
+    "max_line_lneght": 100
   }
-
 }

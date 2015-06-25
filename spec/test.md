@@ -9,3 +9,9 @@ A short description of your package.
 ![is an invalid image on line 9](05.jpg)
 
 ![is an image url on line 11](http://imgs.xkcd.com/comics/the_martian.png)
+
+Some latex math:
+
+$$
+x = \frac{x}{2} + 2/1
+$$
