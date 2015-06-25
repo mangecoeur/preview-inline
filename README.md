@@ -1,10 +1,5 @@
-# preview-inline package
+# Preview-inline package
 
-A short description of your package.
+This package allows you to preview images and latex in documents (markdown only for now) inline - no need to generate an html or pdf document
 
-![This is being used for testing](/Users/jonathanchambers/Pictures/gravatar.jpg)
-
-
-![This is being used for testing](test-image.jpg)
-
-![This is being used for testing](05.jpg)
+This project is intended to be part of a larger suite of tools for markdown for academic writing.
