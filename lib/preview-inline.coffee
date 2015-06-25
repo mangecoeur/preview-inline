@@ -11,6 +11,8 @@ katex = require 'katex'
 # {TextEditorView} = require 'atom-space-pen-views'
 
 # TODOS for first release
+# TODO: fix multi-line formula
+# TODO: catch katex errors, maybe MathJax fallback
 # TODO: sort out bubble formatting to adjust image size and container size
 # TODO: sort out bubble formatting to stretch to contain maths
 # TODO: nice decorations - show close buttons on hover etc

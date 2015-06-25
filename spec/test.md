@@ -15,3 +15,14 @@ Some latex math:
 $$
 x = \frac{x}{2} + 2/1
 $$
+
+$$
+\Phi = H_{tr}(T_{i} - T_{a}) + gA_{sol} I_{sol} + H_{ve}W_s(T_{i} - T_{a})
+$$
+
+$$
+\begin{split}
+\int\limits_0^\infty dt'[a_{int}(t')T_{int}(t-t') - a_{ext}(t')T_{out}(t-t')\\
+ - a_{aux}(t')Q_{aux}(t-t') - a_{aux}(t')Q_{aux}(t-t')] =0
+\end{split}
+$$
