@@ -12,7 +12,6 @@ katex = require 'katex'
 
 # TODOS for first release
 # TODO: fix multi-line formula
-# TODO: catch katex errors, maybe MathJax fallback
 # TODO: sort out bubble formatting to adjust image size and container size
 # TODO: sort out bubble formatting to stretch to contain maths
 # TODO: nice decorations - show close buttons on hover etc
@@ -20,6 +19,8 @@ katex = require 'katex'
 # TODO: scope to markdown files
 
 # TODOS for later
+# TODO: add maybe MathJax fallback
+
 # TODO instead of specific markdown scope selectors, use lang:selector map
 # TODO Live update of maths as you type with small delay
 # TODO require MathJax
@@ -122,7 +123,7 @@ module.exports = PreviewInline =
 
       @editor.decorateMarker marker, {
         type: 'overlay'
-        item: view.getElement()
+        item: view
         position: 'tail'
       }
 

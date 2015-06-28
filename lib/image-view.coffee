@@ -7,8 +7,16 @@ class ImageView
     # how to do this? how to add template?
     # FIXME: use SpacePen for the above https://github.com/atom/space-pen
     @element = document.createElement('div')
-    @element.classList.add('image-inline')
+    @element.classList.add('preview-inline')
+    @element.classList.add('image')
+
     @element.classList.add('output-bubble')
+
+    @richCloseButton = document.createElement('div')
+    @richCloseButton.classList.add('rich-close-button', 'icon', 'icon-x')
+    @richCloseButton.onclick = => @destroy()
+    @element.appendChild(@richCloseButton)
+    @element.classList.add('rich')
 
     @spinner = @buildSpinner()
     @element.appendChild(@spinner)
@@ -20,11 +28,6 @@ class ImageView
     @resultContainer = document.createElement('div')
     @resultContainer.classList.add('bubble-result-container')
     @outputContainer.appendChild(@resultContainer)
-
-    @richCloseButton = document.createElement('div')
-    @richCloseButton.classList.add('rich-close-button', 'icon', 'icon-x')
-    @richCloseButton.onclick = => @destroy()
-    @element.appendChild(@richCloseButton)
 
     @actionPanel = document.createElement('div')
     @actionPanel.classList.add('bubble-action-panel')
@@ -40,15 +43,6 @@ class ImageView
     padding.classList.add('padding')
     @actionPanel.appendChild(padding)
 
-    #
-    # @openButton = document.createElement('div')
-    # @openButton.classList.add('action-button', 'open-button', 'icon', 'icon-file-symlink-file')
-    # @openButton.onclick = =>
-    #     bubbleText = @getAllText()
-    #     atom.workspace.open().then (editor) ->
-    #         editor.insertText(bubbleText)
-    # @actionPanel.appendChild(@openButton)
-
     @setImage(@imageLocation)
     # @setMultiline(true)
 
@@ -59,7 +53,7 @@ class ImageView
     container.innerHTML = container.innerHTML.trim().replace('<br>', '')
 
     @resultType = 'image'
-    @element.classList.add('rich')
+
     image = document.createElement('img')
     image.setAttribute('src', location)
     container.appendChild(image)

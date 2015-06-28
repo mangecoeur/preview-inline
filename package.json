@@ -11,7 +11,9 @@
   },
   "dependencies": {
     "MathJax-node": "^0.3.0",
-    "katex": "^0.4.3"
+    "atom-space-pen-views": "^2.0.5",
+    "katex": "^0.4.3",
+    "space-pen": "^5.1.1"
   },
   "coffeelintConfig": {
     "max_line_lneght": 100
