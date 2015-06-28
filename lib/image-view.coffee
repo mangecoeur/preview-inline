@@ -1,94 +1,18 @@
+{View, jQuery, $, $$} = require 'space-pen'
+
 module.exports =
-class ImageView
-  imageLocation: null
-
-  constructor: (@imageLocation) ->
-    # TODO: DOCs suggest using HTML5 custom elements for views.
-    # how to do this? how to add template?
-    # FIXME: use SpacePen for the above https://github.com/atom/space-pen
-    @element = document.createElement('div')
-    @element.classList.add('preview-inline')
-    @element.classList.add('image')
-
-    @element.classList.add('output-bubble')
-
-    @richCloseButton = document.createElement('div')
-    @richCloseButton.classList.add('rich-close-button', 'icon', 'icon-x')
-    @richCloseButton.onclick = => @destroy()
-    @element.appendChild(@richCloseButton)
-    @element.classList.add('rich')
-
-    @spinner = @buildSpinner()
-    @element.appendChild(@spinner)
-
-    @outputContainer = document.createElement('div')
-    @outputContainer.classList.add('bubble-output-container')
-    @element.appendChild(@outputContainer)
-
-    @resultContainer = document.createElement('div')
-    @resultContainer.classList.add('bubble-result-container')
-    @outputContainer.appendChild(@resultContainer)
-
-    @actionPanel = document.createElement('div')
-    @actionPanel.classList.add('bubble-action-panel')
-    @element.appendChild(@actionPanel)
-
-    @closeButton = document.createElement('div')
-    @closeButton.classList.add('action-button', 'close-button', 'icon', 'icon-x')
-    @closeButton.onclick = => @destroy()
-    @actionPanel.appendChild(@closeButton)
-
-
-    padding = document.createElement('div')
-    padding.classList.add('padding')
-    @actionPanel.appendChild(padding)
-
-    @setImage(@imageLocation)
-    # @setMultiline(true)
-
-    return this
-
-  setImage: (location) ->
-    container = @resultContainer
-    container.innerHTML = container.innerHTML.trim().replace('<br>', '')
-
-    @resultType = 'image'
-
-    image = document.createElement('img')
-    image.setAttribute('src', location)
-    container.appendChild(image)
-    @setMultiline(true)
-
-  setMultiline: (multiline) ->
-    @multiline = multiline
-    if @multiline
-      @element.classList.add('multiline')
-    else
-      @element.classList.remove('multiline')
-
+class ImageView extends View
+  @content: (imageLocation)  ->
+    @div class: 'preview-inline output-bubble image', =>
+      @div class: 'action-buttons', =>
+        @div class: 'close icon icon-x', click: 'destroy'
+        # @div class: ['open-ext', 'icon', 'icon-x'], click: 'open'
+      @div class: 'contents', =>
+        @img class: 'image-element', outlet: "image",
+         src: imageLocation,
 
   buildSpinner: ->
-    container = document.createElement('div')
-    container.classList.add('spinner')
-
-    rect1 = document.createElement('div')
-    rect1.classList.add('rect1')
-    rect2 = document.createElement('div')
-    rect2.classList.add('rect2')
-    rect3 = document.createElement('div')
-    rect3.classList.add('rect3')
-    rect4 = document.createElement('div')
-    rect4.classList.add('rect4')
-    rect5 = document.createElement('div')
-    rect5.classList.add('rect5')
-
-    container.appendChild(rect1)
-    container.appendChild(rect2)
-    container.appendChild(rect3)
-    container.appendChild(rect4)
-    container.appendChild(rect5)
-
-    return container
+    return null
 
   spin: (shouldSpin) ->
     if shouldSpin
@@ -96,11 +20,9 @@ class ImageView
     else
       @spinner.style.display = 'none'
 
-
   destroy: ->
-    # @marker.destroy()
     @element.innerHTML = ''
     @element.remove()
-
-  getElement: ->
-    @element
+  #
+  # getElement: ->
+  #   @element

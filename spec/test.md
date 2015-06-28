@@ -23,6 +23,6 @@ $$
 $$
 \begin{split}
 \int_0^\infty dt'[a_{int}(t')T_{int}(t-t') - a_{ext}(t')T_{out}(t-t')\\
- - a_{aux}(t')Q_{aux}(t-t') - a_{aux}(t')Q_{aux}(t-t')] =0
+ - a_{aux}(t')Q_{aux}(t-t') - a_{aux}(t')Q_{aux}(t-t')] = 0
 \end{split}
 $$

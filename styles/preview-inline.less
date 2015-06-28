@@ -4,106 +4,94 @@
 // for a full listing of what's available.
 @import "ui-variables";
 @import "katex";
+// @import 'octicon-utf-codes';
 
-.preview-inline {
-}
-
-.preview-inline.output-bubble.math {
-  &.bubble-result-container {
-      padding: 10px;
-  }
-}
 
 .preview-inline.output-bubble {
-    @light-bubble-background: fadein(lighten(@syntax-background-color, 40%), 100%);
-    @dark-bubble-background: fadein(lighten(@syntax-background-color, 15%), 100%);
-    @bubble-background: contrast(@syntax-text-color, @dark-bubble-background, @light-bubble-background, 20%);
-    @button-text-color: lighten(@syntax-text-color, 20%);
+  @light-preview-bg: fadein(lighten(@syntax-background-color, 40%), 100%);
+  @dark-preview-bg: fadein(lighten(@syntax-background-color, 15%), 100%);
+  @preview-bg: contrast(@syntax-text-color, @dark-preview-bg, @light-preview-bg, 20%);
+  // @preview-bg: lighten(@syntax-background-color, 43%);
+  @preview-fg: @syntax-text-color;
 
+  // @light-preview-bg: fadein(lighten(@syntax-background-color, 40%), 100%);
+  // @dark-preview-bg: fadein(darken(@syntax-background-color, 15%), 100%);
+  // @preview-bg: contrast(@syntax-text-color, @dark-preview-bg, @light-preview-bg, 43%);
+
+  // @button-bg: darken(@preview-bg, 10%);
+  // @button-fg: lighten(@preview-fg, 20%);
+  @button-bg: darken(@button-background-color, 15%);
+  @button-fg: lighten(@preview-fg, 20%);
+
+  display: flex;
+  flex-direction: row;
+
+  margin-top: 4px;
+  padding: 5px;
+  color: @preview-fg;
+  border-radius: @component-border-radius;
+  border-top-left-radius: 0;
+  background: @preview-bg;
+  box-shadow: 0 1px 3px hsla(0, 0, 0%, 0.4);
+  font-size: @font-size;
+  transition: opacity 300ms;
+
+  &.transparent {
+    opacity: 0.2;
+  }
+
+  // pointer arrow
+  &::before {
+    content: "";
     position: absolute;
-    padding-left: 2px;
-    padding-right: 2px;
-    padding-top: 20px;
-    background-color: @bubble-background;
-    margin-left: 20px;
+    top: -4px;
+    left: 0;
+    border: 4px solid;
+    border-color: transparent transparent @preview-bg @preview-bg;
+  }
 
-    white-space: nowrap;
-    border: none;
-    padding-right: 0px;
+  .action-buttons {
+
     display: flex;
-    box-shadow: 0 0 3px 1px rgba(0,0,0,0.3);
+    flex-direction: column;
+    padding-right: 8px;
 
-    .bubble-contents {
-        // font-size: @font-size * 7/8;
-        padding: 5px;
-
-      display: inline-block;
-      overflow: hidden;
-        position: relative;
-
-        img, svg {
-            background-color: white;
-        }
-
-        video, img, svg {
-            display: block;
-            max-width: 400px;
-            max-height: 400px;
-        }
+    .close {
+      color: @text-color;
+      background-color: @button-bg;
+      border-radius: @component-border-radius;
+      // border-color: @button-border-color;
+      // // border-width: 1px;
+      cursor: pointer;
+      width: 1.2em;
+      height: 1.2em;
+      line-height: 1.2em;
+      text-align: center;
+      box-shadow: 0 0 2px 0px rgba(0,0,0,0.5);
+      // margin: 0;
+      &::before {
+        margin:0;
+      }
     }
 
-    .close-button {
-        &::before {
-            color: @button-text-color;
-            display: block;
-            position: absolute;
-            top: 2px;
-            right: 12px;
-            cursor: pointer;
-            width: 1.5em;
-            height: 1.5em;
-            line-height: 1.5em;
-            text-align: center;
-            background-color: darken(@bubble-background, 10%);
-            box-shadow: 0 0 2px 0px rgba(0,0,0,0.5);
-            margin: 0;
-        }
+    .open-ext {
+
+    }
+  }
+
+  .contents {
+    .math-element {
+
     }
 
-    .bubble-action-panel {
-        display: none;
-        flex-direction: column;
-        width: 30px;
-        background-color: darken(@bubble-background, 10%);
-        box-shadow: inset 1px 0px 1px 0px rgba(0,0,0,0.4);
-        border-radius: 0 3px 3px 0;
-
-        .action-button {
-            @separator-color: fade(darken(@bubble-background, 20%), 20%);
-            flex: none;
-
-            border-top: 1px solid @separator-color;
-
-            &:nth-child(1) {
-                border-top: none;
-                border-bottom: 1px solid @separator-color;
-            }
-
-            &::before {
-                width: 100%;
-                height: 30px;
-                text-align: center;
-                color: @button-text-color;
-                cursor: pointer;
-                text-align: center;
-                margin: 0;
-                line-height: 30px;
-            }
-        }
-
-        .padding {
-            flex: 1;
-        }
+    img, svg {
+        background-color: white;
     }
 
+    video, img, svg {
+        display: block;
+        max-height: 400px;
+        overflow: scroll;
+    }
+  }
 }

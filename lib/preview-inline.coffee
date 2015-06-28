@@ -116,7 +116,7 @@ module.exports = PreviewInline =
 
       marker = @editor.markBufferPosition {
         row: row
-        column: lineLength
+        column: 0
       }, {
         invalidate: 'touch'
       }
