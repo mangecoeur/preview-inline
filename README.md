@@ -15,7 +15,7 @@ Requires pandoc flavor markdown (`language-pfm` package)
 
 # Usage
 
-Trigger 'preview-inline: show' or use the keyboard shortcut 'ctrl-alt-p'
+Place your cursor within the image link or inside a math block and trigger 'preview-inline: show' or use the keyboard shortcut 'ctrl-alt-p'.
 
 # Contribute
 
