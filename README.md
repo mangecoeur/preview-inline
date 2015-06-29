@@ -4,7 +4,7 @@
 
 Preview Latex formula and images embedded directly in your documents - no need to generate a full PDF or HTML preview to check your figures and formula!
 
-![screenshot of image-preview](resources/ScreenShot1.png)
+![screenshot of image-preview](https://raw.githubusercontent.com/mangecoeur/preview-inline/master/resources/ScreenShot1.png)
 
 This project is intended to be part of a larger suite of tools for markdown for academic writing.
 
