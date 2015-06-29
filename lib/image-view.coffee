@@ -13,6 +13,9 @@ class ImageView extends View
         @img class: 'image-element', outlet: "image",
          src: imageLocation,
 
+  initialize: (imageLocation) ->
+    @emitter = new Emitter()
+
   onClose: (callback) ->
     @emitter.on 'was-closed', callback
 

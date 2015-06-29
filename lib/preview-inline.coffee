@@ -89,8 +89,9 @@ module.exports = PreviewInline =
       else if scopeTools.scopeContains(scope, "markup.underline.link.gfm")
         result = @getTextForScope(".markup.underline.link.gfm")
         range = result.range
+        range.start.column = 0
         try
-          view = mdImageView(result.text)
+          view = @mdImageView(result.text)
         catch error
           console.warn  error
           atom.notifications.addWarning(error.message)
