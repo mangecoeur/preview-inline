@@ -13,6 +13,10 @@ This project is intended to be part of a larger suite of tools for markdown for 
 
 Requires pandoc flavor markdown (`language-pfm` package)
 
+# Usage
+
+Trigger 'preview-inline: show' or use the keyboard shortcut 'ctrl-alt-p'
+
 # Contribute
 
 Contributions via pull request are welcome.
