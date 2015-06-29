@@ -62,38 +62,46 @@ describe "PreviewInline", ->
       expect(-> PreviewInline.parseImageLocation(imgPath))
         .toThrow(new Error("no image " + imgPath))
 
+  describe "PreviewInline::getMathAroundCursor", ->
+    it "gets single line maths at cursor", ->
+      editor.setCursorBufferPosition([16, 5])
+      cursor = editor.getLastCursor()
+      text = PreviewInline.getMathAroundCursor(cursor)
+      expect(text).toExist()
+
   describe "when the preview-inline:show image event is triggered", ->
     it "shows markdown image link under cursor (local)", ->
       expect(editor.getPath()).toContain 'test.md'
       editor.setCursorBufferPosition([5, 2])
       atom.commands.dispatch( workspaceElement, 'preview-inline:show')
-      expect(workspaceElement.querySelector('.image-inline')).toExist()
+      expect(workspaceElement.querySelector('div.preview-inline')).toExist()
 
       # TODO check image location is right
 
     it "only shows md image under cursor once", ->
       expect(editor.getPath()).toContain 'test.md'
       editor.setCursorBufferPosition([5, 5])
-      expect(workspaceElement.querySelectorAll('.image-inline').length)
+
+      expect(workspaceElement.querySelectorAll('.preview-inline').length)
         .toEqual(0)
 
+      # waitsForPromise ->
       atom.commands.dispatch workspaceElement, 'preview-inline:show'
 
-      expect(workspaceElement.querySelectorAll('.image-inline').length)
+      expect(workspaceElement.querySelectorAll('div.preview-inline').length)
         .toEqual(1)
 
       atom.commands.dispatch workspaceElement, 'preview-inline:show'
 
-      expect(workspaceElement.querySelectorAll('.image-inline').length)
+      expect(workspaceElement.querySelectorAll('.preview-inline').length)
         .toEqual(1)
-  describe "convert text into rendered math", ->
-    it "returns the html element for the math", ->
-      mathString = "x = \frac{1}{2}"
-      rendered = PreviewInline.renderMath mathString
-      expect(rendered).toExist()
+
+
 
   describe "when preview inline a latex formula event is triggered", ->
     it "correctly extracts the latex string from the cursor", ->
       #pass
+      editor.setCursorBufferPosition([16, 5])
+
     it "shows the math formula inline preview box", ->
       #pass

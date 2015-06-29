@@ -1,3 +1,5 @@
+{Emitter} = require 'atom'
+
 {View, jQuery, $, $$} = require 'space-pen'
 
 module.exports =
@@ -11,18 +13,14 @@ class ImageView extends View
         @img class: 'image-element', outlet: "image",
          src: imageLocation,
 
-  buildSpinner: ->
-    return null
-
-  spin: (shouldSpin) ->
-    if shouldSpin
-      @spinner.style.display = 'block'
-    else
-      @spinner.style.display = 'none'
+  onClose: (callback) ->
+    @emitter.on 'was-closed', callback
 
   destroy: ->
-    @element.innerHTML = ''
+    # @element.innerHTML = ''
+    @emitter.emit 'was-closed'
     @element.remove()
+
   #
   # getElement: ->
   #   @element

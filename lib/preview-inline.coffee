@@ -1,52 +1,39 @@
 ImageView = require './image-view'
 MathView = require './math-view'
-{CompositeDisposable} = require 'atom'
+{CompositeDisposable, Range, Point} = require 'atom'
 scopeTools = require './scope-tools'
 
 fs = require 'fs'
 path = require 'path'
-katex = require 'katex'
 
-# {View} = require 'space-pen'
-# {TextEditorView} = require 'atom-space-pen-views'
-
-# TODOS for first release
-# TODO: fix multi-line formula
-# TODO: sort out bubble formatting to adjust image size and container size
-# TODO: sort out bubble formatting to stretch to contain maths
-# TODO: nice decorations - show close buttons on hover etc
+# TODO: support other languages that have math scopes
 # TODO: show all image or math previews for current document
 # TODO: scope to markdown files
-
-# TODOS for later
-# TODO: add maybe MathJax fallback
-
+# TODO: add MathJax fallback
 # TODO instead of specific markdown scope selectors, use lang:selector map
 # TODO Live update of maths as you type with small delay
-# TODO require MathJax
-# TODO: add caption to MD image, only in case you HAVE an MD image
 # TODO: make possible show images in block in text
 # FIXME: make it so the image preview aligns correctly with soft-wrap lines
-# - align with last screen space row
-# FIXME: sort out image sizing, make dependent on position and window width.
-# TODO: make responsive (is already partly so)
 
+urlPattern = ///
+  ^((https?:\/\/)                              # protocol (optional)
+  ((([a-z\d]([a-z\d-]*[a-z\d])*)\.)+[a-z]{2,}| # domain name
+  ((\d{1,3}\.){3}\d{1,3}))                     # OR ip (v4) address
+  (\:\d+)?(\/[-a-z\d%_.~+]*)*                  # port and path
+  (\?[;&a-z\d%_.~+=-]*)?                       # query string
+  (\#[-a-z\d_]*)?$)                             # fragment locater
+///gi
 
 module.exports = PreviewInline =
-  imageInlineView: null
-  modalPanel: null
   subscriptions: null
   markerBubbleMap: {}
 
   activate: (state) ->
-    console.log 'Loading preview-inline'
-    # MathJax.typeset("x = \frac{1}{2}", (res) -> console.log res)
     @subscriptions = new CompositeDisposable
 
     # Register command that toggles this view
     @subscriptions.add atom.commands.add 'atom-workspace',
         'preview-inline:show': => @showPreview()
-        # 'preview-inline:show-math': => @showMath()
 
     @subscriptions.add(atom.workspace.observeActivePaneItem(
       @updateCurrentEditor.bind(this)))
@@ -57,7 +44,6 @@ module.exports = PreviewInline =
   deactivate: ->
     @subscriptions.dispose()
     @clearResultBubbles()
-    # @imageInlineView.destroy()
 
   serialize: ->
     # imageInlineViewState: @imageInlineView.serialize()
@@ -79,7 +65,6 @@ module.exports = PreviewInline =
         delete @markerBubbleMap[marker.id]
 
   showPreview: () ->
-    #TODO: merge all of these handers
     buffer = @editor.getBuffer()
     rootScope = @editor.getRootScopeDescriptor()
     cursor = @editor.getLastCursor()
@@ -87,104 +72,160 @@ module.exports = PreviewInline =
     row = cursor.getBufferRow()
     lineLength = buffer.lineLengthForRow(row)
 
+    text = @editor.getSelectedText()
+
+    if text != ''
+      console.log text
+      view = @viewForSelectedText(text)
+      range = @editor.getSelectedBufferRange()
+
     # TODO: allow you to define a set of languages that support this method
-    if scopeTools.scopeEqual(rootScope.toString(), '.source.gfm')
+    else if scopeTools.scopeEqual(rootScope.toString(), '.source.gfm')
       scope = cursor.getScopeDescriptor()
       if scopeTools.scopeContains(scope, 'markup.math')
-        mathText = @getTextForScope(".markup.math")
-        view = new MathView(mathText)
+        result = @getMathAroundCursor(cursor)
+        range = result.range
+        view = new MathView(result.text)
       else if scopeTools.scopeContains(scope, "markup.underline.link.gfm")
-        linkURL = @getTextForScope(".markup.underline.link.gfm")
-        # by default the gfm selection starts/ends with brakets, remove
-        # TODO refactor, cleanup, clarify
-        # TODO maybe allow you to preview link with selected text...
-        pattern = /\((.*)\)/
-        result = pattern.exec(linkURL)
-        if result == null
-          return
-        linkURL = result[1]
+        result = @getTextForScope(".markup.underline.link.gfm")
+        range = result.range
         try
-          linkURL = @parseImageLocation(linkURL, path.dirname(@editor.getPath()))
-          view = new ImageView(linkURL)
+          view = mdImageView(result.text)
         catch error
-          # TODO: maybe want to display as a placeholder
           console.warn  error
           atom.notifications.addWarning(error.message)
           return
 
-      @clearBubblesOnRow(row)
+      @clearBubblesOnRow(range.end.row)
 
       marker = @editor.markBufferPosition {
-        row: row
-        column: 0
+        row: range.end.row
+        column: range.start.column
       }, {
         invalidate: 'touch'
       }
 
+      # marker.previewBubble = true
       @editor.decorateMarker marker, {
         type: 'overlay'
         item: view
         position: 'tail'
       }
 
+
+      # TODO: maybe use subscriptions here instead
       @markerBubbleMap[marker.id] = view
       marker.onDidChange (event) =>
-        # console.log event
         if not event.isValid
           view.destroy()
-          marker.destroy()
           delete @markerBubbleMap[marker.id]
+          marker.destroy()
+
+      # clean up the marker when the bubble is closed
+      view.onClose (event) =>
+        delete @markerBubbleMap[marker.id]
+        marker.destroy()
+
+  mdImageView: (text) ->
+    # by default the gfm selection starts/ends with brakets, remove
+    pattern = /\((.*)\)/
+    result = pattern.exec(text)
+    if result == null
+      throw new Error("Regex match failed")
+    linkURL = result[1]
+
+    linkURL = @parseImageLocation(linkURL,
+                                  path.dirname(@editor.getPath()))
+    view = new ImageView(linkURL)
+    return view
 
   getTextForScope: (scopeString) ->
     buffer = @editor.getBuffer()
     range = @editor.bufferRangeForScopeAtCursor(scopeString)
     if range?
-      return buffer.getTextInRange(range)
+      return text: buffer.getTextInRange(range), range: range
     else
-      throw new Error('no markdown math scope under cursor')
+      throw new Error('no matching scope under cursor')
 
-  getMathUnderCursor: () ->
-    #TODO: only handle non-MD case - probably requires using only selected txt
-    text = @editor.getSelectedText()
+  getMathAroundCursor: (cursor) ->
+    scopeString = '.markup.math'
+    buffer = @editor.getBuffer()
+    scope = cursor.getScopeDescriptor()
+    range = @editor.bufferRangeForScopeAtCursor(scopeString)
+    if range?
+      text = buffer.getTextInRange(range)
+      if scopeTools.scopeContains(scope, 'markup.math.block') && range.start.column == 0
+        # maybe we are in the middle of a math block
+        # Search forward and backwards
+        minRow = range.start.row
+        maxRow = range.end.row
+        curScope = scope
+        curPos = [minRow, 0]
 
-    if text != ''
-      # return the selected text if there is any. doesn't guarantee that it will all be math
-      return @editor.getSelectedBufferRange()
+        while scopeTools.scopeContains(curScope, 'markup.math.block')
+          minRow = minRow - 1
+          curPos = [minRow, 0]
+          curScope = @editor.scopeDescriptorForBufferPosition(curPos)
+          line = @editor.lineTextForBufferRow(minRow)
 
-      throw new Error('no math selected under cursor')
+        curScope = scope
+        curPos = [maxRow, 0]
+
+        while scopeTools.scopeContains(curScope, 'markup.math.block')
+          maxRow = maxRow + 1
+          curPos = [maxRow, 0]
+          curScope = @editor.scopeDescriptorForBufferPosition(curPos)
+          line = @editor.lineTextForBufferRow(minRow)
+
+        range = new Range(new Point(minRow, 0), new Point(maxRow,line.length))
+        text = buffer.getTextInRange(range)
+
+        pattern = /\$\$([\S\s]*)\$\$/
+        result = pattern.exec(text)
+        if result == null
+          throw new Error("Regex match failed")
+        text = result[1]
+
+        range.end.row -= 1
+
+        return text: text, range: range
+      else
+        text = buffer.getTextInRange(range)
+        pattern = /\$(.*)\$/
+        result = pattern.exec(text)
+        if result == null
+          throw new Error("Regex match failed")
+        text = result[1]
+        return text: text, range: range
+    else
+      throw new Error('no matching scope under cursor')
+
+  viewForSelectedText: (text) ->
+    try
+      url = getURL(text)
+      return new ImageView(url)
+    catch error
+      console.log text
+      return new MathView(text)
 
   findImageLocation: ->
-    text = @editor.getSelectedText()
+    cursor = @editor.getLastCursor()
+    # which row is this? make sure you ignore soft-wrap
+    row = cursor.getBufferRow()
+    buffer = @editor.getBuffer()
+    if buffer.isRowBlank(row) or @editor.languageMode.isLineCommentedAtBufferRow(row)
+      return
 
-    if text != ''
-      # should maybe have error if you selected a range. could be annoying...
-      selectedRange = @editor.getSelectedBufferRange()
-      # image link should not be on more than one row...
-      if selectedRange.start.row != selectedRange.end.row
-        #error probably just do nothing...
-        console.log "Selected more than one row, aborting"
-        return
-    else
-      cursor = @editor.getLastCursor()
-      # which row is this? make sure you ignore soft-wrap
-      row = cursor.getBufferRow()
-      buffer = @editor.getBuffer()
-      if buffer.isRowBlank(row) or @editor.languageMode.isLineCommentedAtBufferRow(row)
-        return
-
-      text = buffer.getTextInRange(
-        start:
-          row: row
-          column: 0
-        end:
-          row: row
-          column: 9999999)
+    text = buffer.getTextInRange(
+      start:
+        row: row
+        column: 0
+      end:
+        row: row
+        column: 9999999)
     return @parseImageLocation(text, path.dirname(@editor.getPath()))
 
   parseImageLocation: (text, basePath) ->
-
-    #FIXME: for now just assume that you selected only a file path...
-    # could at least check that file exists or something...
     imagePath = text.trim()
     #try to parse selected text as md link
     mdLink = @parseMarkdownLink(imagePath)
@@ -232,15 +273,7 @@ module.exports = PreviewInline =
 
   getURL: (text) ->
     # pull a url out of a line of text
-    pattern = ///
-      ^((https?:\/\/)                              # protocol (optional)
-      ((([a-z\d]([a-z\d-]*[a-z\d])*)\.)+[a-z]{2,}| # domain name
-      ((\d{1,3}\.){3}\d{1,3}))                     # OR ip (v4) address
-      (\:\d+)?(\/[-a-z\d%_.~+]*)*                  # port and path
-      (\?[;&a-z\d%_.~+=-]*)?                       # query string
-      (\#[-a-z\d_]*)?$)                             # fragment locater
-    ///gi
-    result =  text.match(pattern)
+    result =  text.match(urlPattern)
     if result?
       return result[0]
     else

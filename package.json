@@ -16,6 +16,6 @@
     "space-pen": "^5.1.1"
   },
   "coffeelintConfig": {
-    "max_line_lneght": 100
+    "max_line_lneght": 110
   }
 }

@@ -1,19 +1,21 @@
+{Emitter} = require 'atom'
+{View, jQuery, $, $$} = require 'space-pen'
+
 katex = require 'katex'
 mathjax = require 'MathJax-node'
 # View = require 'space-pen'
-{View, jQuery, $, $$} = require 'space-pen'
 
 module.exports =
 class MathView extends View
 
   initialize: (mathText) ->
     @generateMath(mathText)
+    @emitter = new Emitter()
 
   @content: (mathText)  ->
     @div class: 'preview-inline output-bubble math', =>
       @div class: 'action-buttons', =>
         @div class: 'close icon icon-x', click: 'destroy'
-        # @div class: ['open-ext', 'icon', 'icon-x'], click: 'destroy'
       @div class: 'contents', =>
         @div 'Loading', class: 'math-element', outlet: "container"
 
@@ -30,21 +32,14 @@ class MathView extends View
       #   # container.appendChild(out)
       #   )
 
-  buildSpinner: ->
-    container = document.createElement('div')
-    container.classList.add('spinner')
-
-    return container
-
-  spin: (shouldSpin) ->
-    if shouldSpin
-      @spinner.style.display = 'block'
-    else
-      @spinner.style.display = 'none'
+  onClose: (callback) ->
+    @emitter.on 'was-closed', callback
 
   destroy: ->
-    @element.innerHTML = ''
+    # @element.innerHTML = ''
+    @emitter.emit 'was-closed'
     @element.remove()
+
   #
   # getElement: ->
   #   @element
