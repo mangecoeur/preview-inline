@@ -24,15 +24,15 @@ x = \frac{x}{2} + 2/1
 $$
 
 $$
-\Phi = H_{tr}(T_{i} - T_{a}) - gA_{sol} I_{sol} + H_{ve}W_s(T_{i} - T_{a})
+\Phi = H_{tr}(T_{i} - T_{e}) - gA_{sol} I_{sol} + H_{ve}W_s(T_{i} - T_{e})
 $$
 
 $$
-\begin{split}
-\int_0^\infty dt'[a_(){int}(t')T_{int}(t-t') - a_{ext}(t')T_{out}(t-t')\\
- - a_{aux}(t')Q_{aux}(t-t') - a_{aux}(t')Q_{aux}(t-t')] = 0
-\end{split}
+\Phi = \begin{cases}
+\Phi_L - G_{sol} \text{ if } \Phi_L \geq G_{sol}\\
+\Phi_L \text{ if } 0 <\Phi_L \leq G_{sol}\\
+0 \text{ otherwise}
+\end{cases}
 $$
-
 
 And this is some inline math $T = \frac{x}{2}$ that should also work

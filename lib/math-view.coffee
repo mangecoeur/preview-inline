@@ -2,7 +2,11 @@
 {View, jQuery, $, $$} = require 'space-pen'
 
 katex = require 'katex'
-mathjax = require 'MathJax-node'
+# mathjax = require 'MathJax-node'
+
+mathjaxHelper = require './mathjax-helper'
+
+# mjAPI = require("../node_modules/MathJax-node/lib/mj-single.js")
 # View = require 'space-pen'
 
 module.exports =
@@ -11,6 +15,12 @@ class MathView extends View
   initialize: (mathText) ->
     @generateMath(mathText)
     @emitter = new Emitter()
+    mathjaxHelper.loadMathJax()
+    # if (argv.font === "STIX") argv.font = "STIX-Web";
+
+
+    # mathjax.config({displayMessages: true,
+    # displayErrors: true})
 
   @content: (mathText)  ->
     @div class: 'preview-inline output-bubble math', =>
@@ -24,13 +34,14 @@ class MathView extends View
     try
       katex.render(mathText, @container[0])
     catch error
-      atom.notifications.addError(error.message)
-      # parse with mathjax
-      # mathjax.typeset(mathText, (out) ->
-      #   console.log out
-      #   # container.innerHTML = ''
-      #   # container.appendChild(out)
-      #   )
+      atom.notifications.addWarning(error.message)
+      @container.append("<img src='http://latex.codecogs.com/svg.latex?#{mathText}' />")
+
+      # math =  @container[0]
+      # mathText = '$$ \n' + mathText.replace('<br>','') + '\\n $$'
+      # math.innerText = mathText
+      # MathJax.Hub.Queue(["Typeset", MathJax.Hub, math])
+
 
   onClose: (callback) ->
     @emitter.on 'was-closed', callback

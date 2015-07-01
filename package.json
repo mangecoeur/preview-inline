@@ -10,12 +10,13 @@
     "atom": ">=0.174.0 <2.0.0"
   },
   "dependencies": {
-    "MathJax-node": "^0.3.0",
+    "MathJax-node": "git://github.com/mangecoeur/MathJax-node.git#master",
     "atom-space-pen-views": "^2.0.5",
     "katex": "^0.4.3",
+    "loophole": "^1.0.0",
     "space-pen": "^5.1.1"
   },
   "coffeelintConfig": {
-    "max_line_lneght": 110
+    "max_line_length": 110
   }
 }

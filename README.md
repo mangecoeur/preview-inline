@@ -8,6 +8,11 @@ Preview Latex formula and images embedded directly in your documents - no need t
 
 This project is intended to be part of a larger suite of tools for markdown for academic writing.
 
+## Acknowledgements
+
+Currently uses the free LaTeX formula rendering API from [CodeCogs](http://www.codecogs.com/latex/eqneditor.php) as a fallback for formula that can't be parsed by KaTeX. In the future this should be replaced with local MathJax rendering to remove the dependance on an online service.
+
+<a href="http://www.codecogs.com" target="_blank"><img src="http://www.codecogs.com/images/poweredbycodecogs.png" border="0" title="CodeCogs - An Open Source Scientific Library" alt="CodeCogs - An Open Source Scientific Library"></a>
 
 # Install
 

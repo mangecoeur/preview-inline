@@ -1,10 +1,16 @@
-ImageView = require './image-view'
-MathView = require './math-view'
-{CompositeDisposable, Range, Point} = require 'atom'
-scopeTools = require './scope-tools'
-
 fs = require 'fs'
 path = require 'path'
+{CompositeDisposable, Range, Point} = require 'atom'
+
+ImageView = require './image-view'
+MathView = require './math-view'
+scopeTools = require './scope-tools'
+
+{allowUnsafeEval, allowUnsafeNewFunction} = require 'loophole'
+# allowUnsafeNewFunction ->
+# mjAPI = require("../node_modules/MathJax-node/lib/mj-single.js")
+
+
 
 # TODO: support other languages that have math scopes
 # TODO: show all image or math previews for current document
@@ -29,6 +35,36 @@ module.exports = PreviewInline =
   markerBubbleMap: {}
 
   activate: (state) ->
+
+    # MathJax.Hub.Config({
+    #   extensions: ["tex2jax.js"],
+    #   jax: ["input/TeX", "output/HTML-CSS"],
+    #   tex2jax: {
+    #     inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+    #     displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+    #     processEscapes: true
+    #   },
+    #   "HTML-CSS": { availableFonts: ["TeX"] }
+    # })
+    # math = document.createElement('div')
+    # MathJax.Hub.Queue(["Text", math, mathText])
+    # MathJax.Hub.Queue(["Typeset", MathJax.Hub, math])
+    #
+    # mjAPI.config({MathJax: {SVG: {font: "TeX"}}, extensions: ""})
+    # mjAPI.start()
+    #
+    # inline = true
+    # mjAPI.typeset({
+    #   math: 'x = \\frac{x}{2} + 2/1',
+    #   format: "inline-TeX",
+    #   svg:true,
+    #   ex: 6, width: 100,
+    #   linebreaks: true
+    # }, (data) ->
+    #   console.log data.errors
+    #   if (!data.errors)
+    #     console.log(data.svg)
+    # )
     @subscriptions = new CompositeDisposable
 
     # Register command that toggles this view
@@ -158,6 +194,7 @@ module.exports = PreviewInline =
       if scopeTools.scopeContains(scope, 'markup.math.block') && range.start.column == 0
         # maybe we are in the middle of a math block
         # Search forward and backwards
+
         minRow = range.start.row
         maxRow = range.end.row
         curScope = scope
