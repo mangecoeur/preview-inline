@@ -6,14 +6,15 @@ ImageView = require './image-view'
 MathView = require './math-view'
 scopeTools = require './scope-tools'
 
-{allowUnsafeEval, allowUnsafeNewFunction} = require 'loophole'
+# {allowUnsafeEval, allowUnsafeNewFunction} = require 'loophole'
 # allowUnsafeNewFunction ->
 # mjAPI = require("../node_modules/MathJax-node/lib/mj-single.js")
 
+# next
+# TODO: show all image or math previews for current document
 
 
 # TODO: support other languages that have math scopes
-# TODO: show all image or math previews for current document
 # TODO: scope to markdown files
 # TODO: add MathJax fallback
 # TODO instead of specific markdown scope selectors, use lang:selector map

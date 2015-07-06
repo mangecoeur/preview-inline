@@ -2,7 +2,7 @@
   "name": "preview-inline",
   "main": "./lib/preview-inline",
   "version": "0.2.3",
-  "description": "A short description of your package",
+  "description": "Inline preview of LaTeX maths and images in markdown files",
   "keywords": [],
   "repository": "https://github.com/mangecoeur/preview-inline",
   "license": "MIT",
