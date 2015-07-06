@@ -1,9 +1,15 @@
 {
   "name": "preview-inline",
   "main": "./lib/preview-inline",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "Inline preview of LaTeX maths and images in markdown files",
-  "keywords": ["markdown", "latex", "image", "preview", "inline"],
+  "keywords": [
+    "markdown",
+    "latex",
+    "image",
+    "preview",
+    "inline"
+  ],
   "repository": "https://github.com/mangecoeur/preview-inline",
   "license": "MIT",
   "engines": {
