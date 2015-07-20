@@ -4,7 +4,7 @@
 katex = require 'katex'
 # mathjax = require 'MathJax-node'
 
-mathjaxHelper = require './mathjax-helper'
+# mathjaxHelper = require './mathjax-helper'
 
 # mjAPI = require("../node_modules/MathJax-node/lib/mj-single.js")
 # View = require 'space-pen'
