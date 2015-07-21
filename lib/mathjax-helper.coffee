@@ -20,11 +20,17 @@ module.exports =
       # atom.packages.resolvePackagePath('mathjax-wrapper') doesnt work but
       # does for other packages? Nor does 'atom://mathjax-wrapper' work (I get
       # CSP errors). getLoaded over getActive is important.
-      mathjaxPath = atom.packages.getLoadedPackage('mathjax-wrapper')
-      script.src  = path.join(
-        mathjaxPath.path,
-        "node_modules/MathJax/MathJax.js?delayStartupUntil=configured" )
+      mathjaxPath = atom.packages.getLoadedPackage('preview-inline')
+      # mathjaxPath = atom.packages.getLoadedPackage('mathjax-wrapper')
+      script.src  = path.join(mathjaxPath.path, "node_modules",
+                              "MathJax",
+                              "MathJax.js?delayStartupUntil=configured" )
+      # script.src  = path.join(
+      #   mathjaxPath.path,
+      #   "node_modules", "MathJax", "MathJax.js?delayStartupUntil=configured" )
       document.getElementsByTagName("head")[0].appendChild(script)
+    catch error
+      atom.notifications.addError(error.message)
     finally
       return
     return
@@ -39,6 +45,7 @@ module.exports =
   mathProcessor: (domElements) ->
     if MathJax?
       MathJax.Hub.Queue ["Typeset", MathJax.Hub, domElements]
+
     return
 
 #
@@ -55,13 +62,3 @@ configureMathJax = ->
     showMathMenu: false
   MathJax.Hub.Configured()
   return
-
-
-  MathJax.Hub.Config( {
-    jax: ["input/TeX","output/HTML-CSS"],
-    extensions: [],
-    TeX: {
-      extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"],
-    },
-    messageStyle: "none",
-    showMathMenu: false})

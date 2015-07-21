@@ -37,20 +37,6 @@ module.exports = PreviewInline =
 
   activate: (state) ->
 
-    # MathJax.Hub.Config({
-    #   extensions: ["tex2jax.js"],
-    #   jax: ["input/TeX", "output/HTML-CSS"],
-    #   tex2jax: {
-    #     inlineMath: [ ['$','$'], ["\\(","\\)"] ],
-    #     displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
-    #     processEscapes: true
-    #   },
-    #   "HTML-CSS": { availableFonts: ["TeX"] }
-    # })
-    # math = document.createElement('div')
-    # MathJax.Hub.Queue(["Text", math, mathText])
-    # MathJax.Hub.Queue(["Typeset", MathJax.Hub, math])
-    #
     # mjAPI.config({MathJax: {SVG: {font: "TeX"}}, extensions: ""})
     # mjAPI.start()
     #

@@ -16,7 +16,7 @@
     "atom": ">=0.174.0 <2.0.0"
   },
   "dependencies": {
-    "MathJax-node": "git://github.com/mangecoeur/MathJax-node.git#master",
+    "MathJax": "https://github.com/Galadirith/MathJax/tarball/mathjax-complete-node",
     "atom-space-pen-views": "^2.0.5",
     "katex": "^0.4.3",
     "loophole": "^1.0.0",
