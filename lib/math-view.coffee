@@ -15,7 +15,7 @@ class MathView extends View
   initialize: (mathText) ->
     @generateMath(mathText)
     @emitter = new Emitter()
-    mathjaxHelper.loadMathJax()
+    # mathjaxHelper.loadMathJax()
     # if (argv.font === "STIX") argv.font = "STIX-Web";
 
 
