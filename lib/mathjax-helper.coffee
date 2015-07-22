@@ -22,8 +22,12 @@ module.exports =
       # CSP errors). getLoaded over getActive is important.
       mathjaxPath = atom.packages.getLoadedPackage('preview-inline')
       # mathjaxPath = atom.packages.getLoadedPackage('mathjax-wrapper')
-      script.src  = path.join(mathjaxPath.path, "node_modules",
-                              "MathJax",
+      # script.src  = path.join(__dirname, "..", "node_modules",
+      #                         "MathJax",
+      #                         "MathJax.js?delayStartupUntil=configured" )
+
+      script.src  = path.join(__dirname, "..", "resources",
+                              "MathJax-custom",
                               "MathJax.js?delayStartupUntil=configured" )
       # script.src  = path.join(
       #   mathjaxPath.path,

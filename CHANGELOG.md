@@ -1,3 +1,7 @@
+
+## 0.3.1
+- replaced full MathJax bundle with stripped-down install, corrected path bug
+
 ## 0.3.0
 - enabled mathjax and got it working (installs a complete MathJax, might be slow to install)
 

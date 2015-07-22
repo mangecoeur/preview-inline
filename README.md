@@ -28,7 +28,7 @@ Contributions via pull request are welcome.
 Non-exhaustive todo list:
 
 - [ ] better support for non-markdown files
-- [ ] MathJax fallback for maths that KaTeX can't handle
+- [/] MathJax fallback for maths that KaTeX can't handle
 - [ ] Live update of maths as you type with small delay
 - [ ] Display preview as inline block instead of overlay (?)
 - [ ] More test coverage
