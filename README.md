@@ -2,7 +2,6 @@
 
 **Requires pandoc flavor markdown (`language-pfm` package)**
 
-**IMPORTANT: this installs MathJax as a dependency, which is a large package (>50MB) with many files, so give it some time to complete!**
 
 Preview Latex formula and images embedded directly in your documents - no need to generate a full PDF or HTML preview to check your figures and formula!
 
