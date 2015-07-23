@@ -1,4 +1,4 @@
-# image-inline package
+# preview-inline package
 
 A short description of your package.
 
