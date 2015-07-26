@@ -17,7 +17,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 
 
 
-Some latex math blocks:
+Some pandoc-style latex math blocks:
 
 $$
 x = \frac{x}{2} + 2/1
@@ -36,3 +36,18 @@ $$
 $$
 
 And this is some inline math $T = \frac{x}{2}$ that should also work
+
+Some math blocks in backticks
+
+Raw backticks (markup.raw.gfm). 
+
+```
+\Phi = H_{tr}(T_{i} - T_{e}) - gA_{sol} I_{sol} + H_{ve}W_s(T_{i} - T_{e})
+```
+
+
+Tex backticks (markup.code.latex.gfm)
+
+```tex
+\Phi = H_{tr}(T_{i} - T_{e}) - gA_{sol} I_{sol} + H_{ve}W_s(T_{i} - T_{e})
+```

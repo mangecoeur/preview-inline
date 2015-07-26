@@ -1,6 +1,13 @@
 arrayEqual = (a, b) ->
   a.length is b.length and a.every (elem, i) -> elem is b[i]
 
+# Does the given scope match one of a list of scopes
+scopeIn = (scope, scopeList) ->
+  for matchScope in scopeList
+    if scopeEqual(scope, matchScope)
+      return true
+  return false
+
 scopeEqual = (scopeOne, scopeTwo) ->
   # TODO: handle mixed string/array scopes
   if typeof scopeOne is 'string' and typeof scopeTwo is 'string'
@@ -16,6 +23,12 @@ scopeEqual = (scopeOne, scopeTwo) ->
     arrayTwo = scopeTwo  # how to copy?
 
   return arrayEqual(arrayOne, arrayTwo)
+
+scopeContainsOne = (scope, scopeList) ->
+  for matchScope in scopeList
+    if scopeContains(scope, matchScope)
+      return matchScope
+  return false
 
 scopeContains = (outerScope, innerScope) ->
   if typeof outerScope is 'string' and typeof outerScope is 'string'
@@ -45,4 +58,6 @@ scopeContains = (outerScope, innerScope) ->
   return false
 
 module.exports.scopeEqual = scopeEqual
+module.exports.scopeIn = scopeIn
 module.exports.scopeContains = scopeContains
+module.exports.scopeContainsOne = scopeContainsOne

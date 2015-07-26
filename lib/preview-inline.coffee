@@ -105,7 +105,9 @@ module.exports = PreviewInline =
     # TODO: allow you to define a set of languages that support this method
     else if scopeTools.scopeEqual(rootScope.toString(), '.source.gfm')
       scope = cursor.getScopeDescriptor()
-      if scopeTools.scopeContains(scope, 'markup.math')
+      if scopeTools.scopeContainsOne(scope, ['markup.math',
+                                             'markup.raw.gfm',
+                                             'markup.code.latex.gfm']) != false
         result = @getMathAroundCursor(cursor)
         range = result.range
         view = new MathView(result.text)
@@ -116,7 +118,6 @@ module.exports = PreviewInline =
         try
           view = @mdImageView(result.text)
         catch error
-          console.warn  error
           atom.notifications.addWarning(error.message)
           return
 
@@ -172,22 +173,39 @@ module.exports = PreviewInline =
       throw new Error('no matching scope under cursor')
 
   getMathAroundCursor: (cursor) ->
-    scopeString = '.markup.math'
+    # get the short scope string for math
+    scope = cursor.getScopeDescriptor()
+    scopeString = scopeTools.scopeContainsOne(scope, ['markup.math.block',
+                    'markup.math.inline',
+                    'markup.raw.gfm',
+                    'markup.code.latex.gfm'])
     buffer = @editor.getBuffer()
     scope = cursor.getScopeDescriptor()
     range = @editor.bufferRangeForScopeAtCursor(scopeString)
     if range?
       text = buffer.getTextInRange(range)
-      if scopeTools.scopeContains(scope, 'markup.math.block') && range.start.column == 0
-        # maybe we are in the middle of a math block
-        # Search forward and backwards
+      if scopeTools.scopeEqual(scopeString, 'markup.math.inline')
+        text = buffer.getTextInRange(range)
+        pattern = /\$(.*)\$/
+        result = pattern.exec(text)
+        if result == null
+          throw new Error("Regex match failed")
+        text = result[1]
+        return text: text, range: range
+      else if range.start.column == 0
+        # scopeTools.scopeContainsOne(scope,
+        #   ['markup.raw.gfm',
+        #   'markup.code.latex.gfm',
+        #   'markup.math.block']) != false &&
+        # maybe we are in the middle of a math block:
+        # Search forward and backwards to get the full text range
 
         minRow = range.start.row
         maxRow = range.end.row
         curScope = scope
         curPos = [minRow, 0]
 
-        while scopeTools.scopeContains(curScope, 'markup.math.block')
+        while scopeTools.scopeContains(curScope, scopeString)
           minRow = minRow - 1
           curPos = [minRow, 0]
           curScope = @editor.scopeDescriptorForBufferPosition(curPos)
@@ -196,31 +214,22 @@ module.exports = PreviewInline =
         curScope = scope
         curPos = [maxRow, 0]
 
-        while scopeTools.scopeContains(curScope, 'markup.math.block')
+        while scopeTools.scopeContains(curScope, scopeString)
           maxRow = maxRow + 1
           curPos = [maxRow, 0]
           curScope = @editor.scopeDescriptorForBufferPosition(curPos)
           line = @editor.lineTextForBufferRow(minRow)
 
-        range = new Range(new Point(minRow, 0), new Point(maxRow,line.length))
+        range = new Range(new Point(minRow + 2, 0), new Point(maxRow - 2 , 9999 ))
         text = buffer.getTextInRange(range)
-
-        pattern = /\$\$([\S\s]*)\$\$/
-        result = pattern.exec(text)
-        if result == null
-          throw new Error("Regex match failed")
-        text = result[1]
+        # pattern = /\$\$([\S\s]*)\$\$/
+        # result = pattern.exec(text)
+        # if result == null
+        #   throw new Error("Regex match failed")
+        # text = result[1]
 
         range.end.row -= 1
 
-        return text: text, range: range
-      else
-        text = buffer.getTextInRange(range)
-        pattern = /\$(.*)\$/
-        result = pattern.exec(text)
-        if result == null
-          throw new Error("Regex match failed")
-        text = result[1]
         return text: text, range: range
     else
       throw new Error('no matching scope under cursor')

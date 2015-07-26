@@ -1,3 +1,5 @@
+## 0.3.3
+- Support for raw code and tex blocks
 
 ## 0.3.1
 - replaced full MathJax bundle with stripped-down install, corrected path bug

@@ -22,11 +22,14 @@ class MathView extends View
       @div class: 'action-buttons', =>
         @div class: 'close icon icon-x', click: 'destroy'
       @div class: 'contents', =>
-        @div 'Loading', class: 'math-element', outlet: "container"
+        @div class: 'math-element', outlet: "container", =>
+          @span class: 'loading loading-spinner-small inline-block'
+
 
 
   generateMath: (mathText) ->
     try
+      # @container[0].innerHTML = ''
       katex.render(mathText, @container[0])
     catch error
       # atom.notifications.addWarning(error.message)
