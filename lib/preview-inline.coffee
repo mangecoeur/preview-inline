@@ -38,31 +38,15 @@ module.exports = PreviewInline =
       default: ['.source.gfm']
       items:
         type: 'string'
-  mathScopes: ['markup.math.block',
-                  'markup.math.inline',
+  mathBlockScopes: ['markup.math.block',
                   'markup.raw.gfm',
                   'markup.code.latex.gfm']
+  mathInlineScopes: ['markup.math.inline']
   imageScopes: ["markup.underline.link.gfm"]
   subscriptions: null
   markerBubbleMap: {}
 
   activate: (state) ->
-
-    # mjAPI.config({MathJax: {SVG: {font: "TeX"}}, extensions: ""})
-    # mjAPI.start()
-    #
-    # inline = true
-    # mjAPI.typeset({
-    #   math: 'x = \\frac{x}{2} + 2/1',
-    #   format: "inline-TeX",
-    #   svg:true,
-    #   ex: 6, width: 100,
-    #   linebreaks: true
-    # }, (data) ->
-    #   console.log data.errors
-    #   if (!data.errors)
-    #     console.log(data.svg)
-    # )
     @subscriptions = new CompositeDisposable
 
     # Register command that toggles this view
@@ -121,9 +105,7 @@ module.exports = PreviewInline =
     else
       scope = cursor.getScopeDescriptor()
 
-      if scopeTools.scopeContainsOne(scope, ['markup.math',
-                                             'markup.raw.gfm',
-                                             'markup.code.latex.gfm']) != false
+      if scopeTools.scopeContainsOne(scope, @mathBlockScopes.concat(@mathInlineScopes)) != false
         result = @getMathAroundCursor(cursor)
 
         if result?
@@ -199,68 +181,53 @@ module.exports = PreviewInline =
 
   getMathAroundCursor: (cursor) ->
     # get the short scope string for math
-    scope = cursor.getScopeDescriptor()
-    scopeString = scopeTools.scopeContainsOne(scope, ['markup.math.block',
-                    'markup.math.inline',
-                    'markup.raw.gfm',
-                    'markup.code.latex.gfm'])
     buffer = @editor.getBuffer()
     scope = cursor.getScopeDescriptor()
 
-    if scope? and scopeString
+    scopeString = scopeTools.scopeContainsOne(scope, @mathInlineScopes)
+
+    if scopeString
       range = @editor.bufferRangeForScopeAtCursor(scopeString)
-      # see if we are in an inline math section
-      if range?
+      text = buffer.getTextInRange(range)
+      pattern = /\$(.*)\$/
+      result = pattern.exec(text)
+      if result == null
+        throw new Error("Regex match failed")
+      text = result[1]
+      return text: text, range: range
+    else
+      scopeString = scopeTools.scopeContainsOne(scope, @mathBlockScopes)
+      if scopeString
+        range = @editor.bufferRangeForScopeAtCursor(scopeString)
         text = buffer.getTextInRange(range)
-        if scopeTools.scopeEqual(scopeString, 'markup.math.inline')
-          text = buffer.getTextInRange(range)
-          pattern = /\$(.*)\$/
-          result = pattern.exec(text)
-          if result == null
-            throw new Error("Regex match failed")
-          text = result[1]
-          return text: text, range: range
-        else if range.start.column == 0
-          # scopeTools.scopeContainsOne(scope,
-          #   ['markup.raw.gfm',
-          #   'markup.code.latex.gfm',
-          #   'markup.math.block']) != false &&
-          # maybe we are in the middle of a math block:
-          # Search forward and backwards to get the full text range
 
-          minRow = range.start.row
-          maxRow = range.end.row
-          curScope = scope
+        minRow = range.start.row
+        maxRow = range.end.row
+        curScope = scope
+        curPos = [minRow, 0]
+
+        while scopeTools.scopeContains(curScope, scopeString)
+          minRow = minRow - 1
           curPos = [minRow, 0]
+          curScope = @editor.scopeDescriptorForBufferPosition(curPos)
+          line = @editor.lineTextForBufferRow(minRow)
 
-          while scopeTools.scopeContains(curScope, scopeString)
-            minRow = minRow - 1
-            curPos = [minRow, 0]
-            curScope = @editor.scopeDescriptorForBufferPosition(curPos)
-            line = @editor.lineTextForBufferRow(minRow)
+        curScope = scope
+        curPos = [maxRow, 0]
 
-          curScope = scope
+        while scopeTools.scopeContains(curScope, scopeString)
+          maxRow = maxRow + 1
           curPos = [maxRow, 0]
+          curScope = @editor.scopeDescriptorForBufferPosition(curPos)
+          line = @editor.lineTextForBufferRow(minRow)
 
-          while scopeTools.scopeContains(curScope, scopeString)
-            maxRow = maxRow + 1
-            curPos = [maxRow, 0]
-            curScope = @editor.scopeDescriptorForBufferPosition(curPos)
-            line = @editor.lineTextForBufferRow(minRow)
+        range = new Range(new Point(minRow + 2, 0), new Point(maxRow - 2 , 9999 ))
 
-          range = new Range(new Point(minRow + 2, 0), new Point(maxRow - 2 , 9999 ))
-          text = buffer.getTextInRange(range)
-          # pattern = /\$\$([\S\s]*)\$\$/
-          # result = pattern.exec(text)
-          # if result == null
-          #   throw new Error("Regex match failed")
-          # text = result[1]
+        text = buffer.getTextInRange(range)
 
-          return text: text, range: range
+        return text: text, range: range
       else
         return null
-    else
-      return null
 
   viewForSelectedText: (text) ->
     try

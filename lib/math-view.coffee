@@ -1,5 +1,5 @@
 {Emitter} = require 'atom'
-{View,} = require 'space-pen'
+{View} = require 'space-pen'
 
 katex = require 'katex'
 # mathjax = require 'MathJax-node'

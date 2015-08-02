@@ -5,8 +5,6 @@
 # for calls to MathJax to process LaTeX equations.
 #
 
-path = require 'path'
-
 module.exports =
   #
   # Load MathJax environment
