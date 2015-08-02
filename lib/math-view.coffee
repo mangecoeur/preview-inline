@@ -28,8 +28,8 @@ class MathView extends View
 
 
   generateMath: (mathText) ->
+    @container[0].innerHTML = ''
     try
-      # @container[0].innerHTML = ''
       katex.render(mathText, @container[0])
     catch error
       # atom.notifications.addWarning(error.message)

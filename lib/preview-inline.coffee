@@ -6,20 +6,10 @@ ImageView = require './image-view'
 MathView = require './math-view'
 scopeTools = require './scope-tools'
 
-# {allowUnsafeEval, allowUnsafeNewFunction} = require 'loophole'
-# allowUnsafeNewFunction ->
-# mjAPI = require("../node_modules/MathJax-node/lib/mj-single.js")
-
 # next
 # TODO: show all image or math previews for current document
-
-
 # TODO: support other languages that have math scopes
-# TODO: scope to markdown files
-# TODO: add MathJax fallback
 # TODO instead of specific markdown scope selectors, use lang:selector map
-# TODO Live update of maths as you type with small delay
-# TODO: make possible show images in block in text
 # FIXME: make it so the image preview aligns correctly with soft-wrap lines
 
 urlPattern = ///
@@ -72,15 +62,15 @@ module.exports = PreviewInline =
     @editor = currentPaneItem
 
   clearPreviews: ->
-    for markerId, bubble of @markerBubbleMap
-      bubble.destroy()
+    for markerId, item of @markerBubbleMap
+      item.view.destroy()
     @markerBubbleMap = {}
 
   clearBubblesOnRow: (row) ->
     buffer = @editor.getBuffer()
     for marker in buffer.findMarkers({endRow: row})
       if @markerBubbleMap[marker.id]?
-        @markerBubbleMap[marker.id].destroy()
+        @markerBubbleMap[marker.id].view.destroy()
         delete @markerBubbleMap[marker.id]
 
   showPreview: () ->
@@ -155,25 +145,19 @@ module.exports = PreviewInline =
         delete @markerBubbleMap[marker.id]
         marker.destroy()
 
-    # clean up the marker when the bubble is closed
     view.onClose (event) =>
       delete @markerBubbleMap[marker.id]
       marker.destroy()
 
   addMathView: (view, range, isBlock) ->
-
-    @clearBubblesOnRow(range.end.row)
-
     mathContent = @editor.markBufferRange range, {
       invalidate: 'overlap'
     }
 
-    @editor.decorateMarker mathContent, {
-      type: 'highlight'
-      # item: view
-      # position: 'head'
-      # class:'highlight-green'
-    }
+    # @editor.decorateMarker mathContent, {
+    #   type: 'highlight'
+    #   class: 'highlight-green'
+    # }
 
     markRow = if isBlock
       range.end.row + 1
@@ -181,6 +165,7 @@ module.exports = PreviewInline =
       range.start.row
 
     # markCol = if isBlock
+    @clearBubblesOnRow(markRow)
 
     marker = @editor.markBufferRange [{
       row: markRow
@@ -189,7 +174,7 @@ module.exports = PreviewInline =
       row: markRow
       column: range.start.column + 1
     }], {
-      invalidate: 'overlap'
+      invalidate: 'touch'
     }
 
     @editor.decorateMarker marker, {
@@ -199,17 +184,51 @@ module.exports = PreviewInline =
     }
 
     # TODO: maybe use subscriptions here instead
-    @markerBubbleMap[marker.id] = view
-    marker.onDidChange (event) =>
+    @markerBubbleMap[marker.id] = {view: view, mathRegion: mathContent.id}
+
+    # add a listener to track changes to text
+    editorListener = @editor.onDidStopChanging (event) =>
+      pos = @editor.getCursorBufferPosition()
+      markerList = @editor.findMarkers({containsBufferPosition: pos})
+      for item in markerList
+        if item.id == mathContent.id
+          marker = item
+          break
+      if not marker
+        return
+      text = @editor.getTextInBufferRange(marker.getBufferRange())
+      view.generateMath(text)
+
+    mathContent.onDidChange (event) =>
       if not event.isValid
+        editorListener.dispose()
         view.destroy()
         delete @markerBubbleMap[marker.id]
         marker.destroy()
+        mathContent.destroy()
+      else
+        # @editor.decorateMarker mathContent, {
+        #   type: 'highlight'
+        #   class: 'highlight-green'
+        # }
+        text = @editor.getTextInBufferRange(range)
+        view.generateMath(text)
+
+    marker.onDidChange (event) =>
+      if not event.isValid
+        editorListener.dispose()
+        view.destroy()
+        delete @markerBubbleMap[marker.id]
+        marker.destroy()
+        mathContent.destroy()
+
 
     # clean up the marker when the bubble is closed
     view.onClose (event) =>
       delete @markerBubbleMap[marker.id]
       marker.destroy()
+      editorListener.dispose()
+
 
   mdImageView: (text) ->
     # by default the gfm selection starts/ends with brakets, remove

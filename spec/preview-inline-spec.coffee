@@ -35,6 +35,10 @@ describe "PreviewInline", ->
     runs ->
       buffer = editor.getBuffer()
 
+  describe "PreviewInline::clearPreviews", ->
+    it "works", ->
+      expect(PreviewInline.clearPreviews()).toBeTruthy()
+
   describe "PreviewInline::parseImageLocation", ->
     it "parses a url", ->
       url = "http://imgs.xkcd.com/comics/the_martian.png"

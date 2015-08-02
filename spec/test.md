@@ -14,8 +14,8 @@ $$
 
 $$
 \Phi = \begin{cases}
-\Phi_L - G_{sol} \text{ if } \Phi_L \geq G_{sol}\\
-\Phi_L \text{ if } 0 <\Phi_L \leq G_{sol}\\
+\Phi_L - G_{sol} \text{ howdy if } \Phi_L \geq G_{sol}\\
+\Phi_L \text{ if }  0 <\Phi_L \leq G_{sol}\\
 0 \text{ otherwise}
 \end{cases}
 $$
