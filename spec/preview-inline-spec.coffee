@@ -19,14 +19,21 @@ describe "PreviewInline", ->
     filePath = 'test.md'
 
     waitsForPromise ->
-      atom.workspace.open(filePath).then (ed) -> editor = ed
+      atom.packages.activatePackage('preview-inline')
+
+    # p = atom.packages.activatePackage('language-pfm')
+    waitsForPromise ->
+      atom.packages.activatePackage('language-pfm')
+
+
+    waitsForPromise ->
+      atom.workspace.open(filePath).then (ed) ->
+        editor = ed
+        grammar = atom.grammars.grammarForScopeName('source.gfm')
+        editor.setGrammar(grammar)
 
     runs ->
       buffer = editor.getBuffer()
-
-    waitsForPromise ->
-      atom.packages.activatePackage('preview-inline')
-
 
   describe "PreviewInline::parseImageLocation", ->
     it "parses a url", ->
@@ -64,12 +71,25 @@ describe "PreviewInline", ->
 
 # TODO: this depends on the buffer having the right syntax applied, don't
 # know how to do that yet
-  xdescribe "PreviewInline::getMathAroundCursor", ->
+  describe "PreviewInline::getMathAroundCursor", ->
+    it "doesn't crash if you are on an empty line", ->
+      editor.setCursorBufferPosition([4, 1])
+      cursor = editor.getLastCursor()
+      text = PreviewInline.getMathAroundCursor(cursor)
+      expect(text).toBeNull()
     it "gets single line maths at cursor", ->
-      editor.setCursorBufferPosition([16, 5])
+      editor.setCursorBufferPosition([23, 5])
       cursor = editor.getLastCursor()
       text = PreviewInline.getMathAroundCursor(cursor)
       expect(text).toExist()
+
+
+  xdescribe "PreviewInline::showPreview", ->
+    it "doesn't crash if you are on an empty line", ->
+      editor.setCursorBufferPosition([4, 1])
+      cursor = editor.getLastCursor()
+      text = PreviewInline.getMathAroundCursor(cursor)
+      expect(text).toBeNull()
 
 #TODO: figure out how to correctly create and query for an element added to view
   xdescribe "when the preview-inline:show image event is triggered", ->

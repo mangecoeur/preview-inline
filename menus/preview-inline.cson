@@ -2,8 +2,8 @@
 'context-menu':
   'atom-text-editor': [
     {
-      'label': 'Toggle image-inline'
-      'command': 'image-inline:toggle'
+      'label': 'Toggle Preview'
+      'command': 'preview-inline:show'
     }
   ]
 'menu': [

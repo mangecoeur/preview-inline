@@ -32,6 +32,13 @@ urlPattern = ///
 ///gi
 
 module.exports = PreviewInline =
+  config:
+    scope:
+      type: 'array'
+      default: ['.source.gfm']
+      items:
+        type: 'string'
+
   subscriptions: null
   markerBubbleMap: {}
 
@@ -57,25 +64,26 @@ module.exports = PreviewInline =
     # Register command that toggles this view
     @subscriptions.add atom.commands.add 'atom-workspace',
         'preview-inline:show': => @showPreview()
+        'preview-inline:clear': => @clearPreviews()
 
     @subscriptions.add(atom.workspace.observeActivePaneItem(
       @updateCurrentEditor.bind(this)))
 
-    #TODO: change editor...
     @editor = atom.workspace.getActiveTextEditor()
 
   deactivate: ->
     @subscriptions.dispose()
-    @clearResultBubbles()
+    @clearPreviews()
 
   serialize: ->
     # imageInlineViewState: @imageInlineView.serialize()
 
   updateCurrentEditor: (currentPaneItem) ->
     return if not currentPaneItem? or currentPaneItem is @editor
+
     @editor = currentPaneItem
 
-  clearResultBubbles: ->
+  clearPreviews: ->
     for markerId, bubble of @markerBubbleMap
       bubble.destroy()
     @markerBubbleMap = {}
@@ -98,19 +106,25 @@ module.exports = PreviewInline =
     text = @editor.getSelectedText()
 
     if text != ''
-      console.log text
       view = @viewForSelectedText(text)
       range = @editor.getSelectedBufferRange()
 
     # TODO: allow you to define a set of languages that support this method
     else if scopeTools.scopeEqual(rootScope.toString(), '.source.gfm')
       scope = cursor.getScopeDescriptor()
+
       if scopeTools.scopeContainsOne(scope, ['markup.math',
                                              'markup.raw.gfm',
                                              'markup.code.latex.gfm']) != false
         result = @getMathAroundCursor(cursor)
-        range = result.range
-        view = new MathView(result.text)
+
+        if result?
+          range = result.range
+          view = new MathView(result.text)
+        else
+          atom.notifications.addWarning("Could not find math at cursor")
+          return
+
       else if scopeTools.scopeContains(scope, "markup.underline.link.gfm")
         result = @getTextForScope(".markup.underline.link.gfm")
         range = result.range
@@ -120,36 +134,39 @@ module.exports = PreviewInline =
         catch error
           atom.notifications.addWarning(error.message)
           return
+      else
+        atom.notifications.addWarning("Could not find math at cursor")
+        return
 
-      @clearBubblesOnRow(range.end.row)
+    @clearBubblesOnRow(range.end.row)
 
-      marker = @editor.markBufferPosition {
-        row: range.end.row
-        column: range.start.column
-      }, {
-        invalidate: 'touch'
-      }
+    marker = @editor.markBufferPosition {
+      row: range.end.row
+      column: range.start.column
+    }, {
+      invalidate: 'touch'
+    }
 
-      # marker.previewBubble = true
-      @editor.decorateMarker marker, {
-        type: 'overlay'
-        item: view
-        position: 'tail'
-      }
+    # marker.previewBubble = true
+    @editor.decorateMarker marker, {
+      type: 'overlay'
+      item: view
+      position: 'tail'
+    }
 
 
-      # TODO: maybe use subscriptions here instead
-      @markerBubbleMap[marker.id] = view
-      marker.onDidChange (event) =>
-        if not event.isValid
-          view.destroy()
-          delete @markerBubbleMap[marker.id]
-          marker.destroy()
-
-      # clean up the marker when the bubble is closed
-      view.onClose (event) =>
+    # TODO: maybe use subscriptions here instead
+    @markerBubbleMap[marker.id] = view
+    marker.onDidChange (event) =>
+      if not event.isValid
+        view.destroy()
         delete @markerBubbleMap[marker.id]
         marker.destroy()
+
+    # clean up the marker when the bubble is closed
+    view.onClose (event) =>
+      delete @markerBubbleMap[marker.id]
+      marker.destroy()
 
   mdImageView: (text) ->
     # by default the gfm selection starts/ends with brakets, remove
@@ -181,66 +198,71 @@ module.exports = PreviewInline =
                     'markup.code.latex.gfm'])
     buffer = @editor.getBuffer()
     scope = cursor.getScopeDescriptor()
-    range = @editor.bufferRangeForScopeAtCursor(scopeString)
-    if range?
-      text = buffer.getTextInRange(range)
-      if scopeTools.scopeEqual(scopeString, 'markup.math.inline')
+
+    if scope? and scopeString
+      range = @editor.bufferRangeForScopeAtCursor(scopeString)
+      # see if we are in an inline math section
+      if range?
         text = buffer.getTextInRange(range)
-        pattern = /\$(.*)\$/
-        result = pattern.exec(text)
-        if result == null
-          throw new Error("Regex match failed")
-        text = result[1]
-        return text: text, range: range
-      else if range.start.column == 0
-        # scopeTools.scopeContainsOne(scope,
-        #   ['markup.raw.gfm',
-        #   'markup.code.latex.gfm',
-        #   'markup.math.block']) != false &&
-        # maybe we are in the middle of a math block:
-        # Search forward and backwards to get the full text range
+        if scopeTools.scopeEqual(scopeString, 'markup.math.inline')
+          text = buffer.getTextInRange(range)
+          pattern = /\$(.*)\$/
+          result = pattern.exec(text)
+          if result == null
+            throw new Error("Regex match failed")
+          text = result[1]
+          return text: text, range: range
+        else if range.start.column == 0
+          # scopeTools.scopeContainsOne(scope,
+          #   ['markup.raw.gfm',
+          #   'markup.code.latex.gfm',
+          #   'markup.math.block']) != false &&
+          # maybe we are in the middle of a math block:
+          # Search forward and backwards to get the full text range
 
-        minRow = range.start.row
-        maxRow = range.end.row
-        curScope = scope
-        curPos = [minRow, 0]
-
-        while scopeTools.scopeContains(curScope, scopeString)
-          minRow = minRow - 1
+          minRow = range.start.row
+          maxRow = range.end.row
+          curScope = scope
           curPos = [minRow, 0]
-          curScope = @editor.scopeDescriptorForBufferPosition(curPos)
-          line = @editor.lineTextForBufferRow(minRow)
 
-        curScope = scope
-        curPos = [maxRow, 0]
+          while scopeTools.scopeContains(curScope, scopeString)
+            minRow = minRow - 1
+            curPos = [minRow, 0]
+            curScope = @editor.scopeDescriptorForBufferPosition(curPos)
+            line = @editor.lineTextForBufferRow(minRow)
 
-        while scopeTools.scopeContains(curScope, scopeString)
-          maxRow = maxRow + 1
+          curScope = scope
           curPos = [maxRow, 0]
-          curScope = @editor.scopeDescriptorForBufferPosition(curPos)
-          line = @editor.lineTextForBufferRow(minRow)
 
-        range = new Range(new Point(minRow + 2, 0), new Point(maxRow - 2 , 9999 ))
-        text = buffer.getTextInRange(range)
-        # pattern = /\$\$([\S\s]*)\$\$/
-        # result = pattern.exec(text)
-        # if result == null
-        #   throw new Error("Regex match failed")
-        # text = result[1]
+          while scopeTools.scopeContains(curScope, scopeString)
+            maxRow = maxRow + 1
+            curPos = [maxRow, 0]
+            curScope = @editor.scopeDescriptorForBufferPosition(curPos)
+            line = @editor.lineTextForBufferRow(minRow)
 
-        range.end.row -= 1
+          range = new Range(new Point(minRow + 2, 0), new Point(maxRow - 2 , 9999 ))
+          text = buffer.getTextInRange(range)
+          # pattern = /\$\$([\S\s]*)\$\$/
+          # result = pattern.exec(text)
+          # if result == null
+          #   throw new Error("Regex match failed")
+          # text = result[1]
 
-        return text: text, range: range
+          return text: text, range: range
+      else
+        return null
     else
-      throw new Error('no matching scope under cursor')
+      return null
 
   viewForSelectedText: (text) ->
     try
-      url = getURL(text)
+      url = @getURL(text)
       return new ImageView(url)
     catch error
-      console.log text
-      return new MathView(text)
+      try
+        return new MathView(text)
+      catch error
+        atom.notifications.addError(error.message)
 
   findImageLocation: ->
     cursor = @editor.getLastCursor()

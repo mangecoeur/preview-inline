@@ -39,7 +39,7 @@ And this is some inline math $T = \frac{x}{2}$ that should also work
 
 Some math blocks in backticks
 
-Raw backticks (markup.raw.gfm). 
+Raw backticks (markup.raw.gfm).
 
 ```
 \Phi = H_{tr}(T_{i} - T_{e}) - gA_{sol} I_{sol} + H_{ve}W_s(T_{i} - T_{e})
@@ -51,3 +51,10 @@ Tex backticks (markup.code.latex.gfm)
 ```tex
 \Phi = H_{tr}(T_{i} - T_{e}) - gA_{sol} I_{sol} + H_{ve}W_s(T_{i} - T_{e})
 ```
+
+\\
+  \Phi = H_{tr}(T_{i} - T_{e}) - gA_{sol} I_{sol} + H_{ve}W_s(T_{i} - T_{e})
+\\
+
+
+\Phi = H_{tr}(T_{i} - T_{e}) - gA_{sol} I_{sol} + H_{ve}W_s(T_{i} - T_{e})
