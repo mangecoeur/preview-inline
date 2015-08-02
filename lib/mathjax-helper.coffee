@@ -4,6 +4,7 @@
 # This module will handle loading the MathJax environment and provide a wrapper
 # for calls to MathJax to process LaTeX equations.
 #
+path = require 'path'
 
 module.exports =
   #
@@ -15,7 +16,10 @@ module.exports =
       configureMathJax()
     script.type   = "text/javascript"
     try
-      script.src  = "atom://preview-inline/resources/MathJax-custom/MathJax.js?delayStartupUntil=configured"
+      # script.src  = "atom://preview-inline/resources/MathJax-custom/MathJax.js?delayStartupUntil=configured"
+      script.src  = path.join(__dirname, "..", "resources",
+                              "MathJax-custom",
+                              "MathJax.js?delayStartupUntil=configured" )
       document.getElementsByTagName("head")[0].appendChild(script)
     catch error
       atom.notifications.addError(error.message)
