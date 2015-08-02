@@ -1,6 +1,6 @@
 {Emitter} = require 'atom'
 
-{View, jQuery, $, $$} = require 'space-pen'
+{View} = require 'space-pen'
 
 module.exports =
 class ImageView extends View

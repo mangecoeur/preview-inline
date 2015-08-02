@@ -38,7 +38,11 @@ module.exports = PreviewInline =
       default: ['.source.gfm']
       items:
         type: 'string'
-
+  mathScopes: ['markup.math.block',
+                  'markup.math.inline',
+                  'markup.raw.gfm',
+                  'markup.code.latex.gfm']
+  imageScopes: ["markup.underline.link.gfm"]
   subscriptions: null
   markerBubbleMap: {}
 
@@ -96,8 +100,12 @@ module.exports = PreviewInline =
         delete @markerBubbleMap[marker.id]
 
   showPreview: () ->
-    buffer = @editor.getBuffer()
     rootScope = @editor.getRootScopeDescriptor()
+
+    if not scopeTools.scopeIn(rootScope.toString(), atom.config.get("preview-inline.scope"))
+      return
+
+    buffer = @editor.getBuffer()
     cursor = @editor.getLastCursor()
 
     row = cursor.getBufferRow()
@@ -110,7 +118,7 @@ module.exports = PreviewInline =
       range = @editor.getSelectedBufferRange()
 
     # TODO: allow you to define a set of languages that support this method
-    else if scopeTools.scopeEqual(rootScope.toString(), '.source.gfm')
+    else
       scope = cursor.getScopeDescriptor()
 
       if scopeTools.scopeContainsOne(scope, ['markup.math',
@@ -125,7 +133,7 @@ module.exports = PreviewInline =
           atom.notifications.addWarning("Could not find math at cursor")
           return
 
-      else if scopeTools.scopeContains(scope, "markup.underline.link.gfm")
+      else if scopeTools.scopeContainsOne(scope, ["markup.underline.link.gfm"])
         result = @getTextForScope(".markup.underline.link.gfm")
         range = result.range
         range.start.column = 0
@@ -135,7 +143,7 @@ module.exports = PreviewInline =
           atom.notifications.addWarning(error.message)
           return
       else
-        atom.notifications.addWarning("Could not find math at cursor")
+        atom.notifications.addWarning("Could not find anything to preview at cursor")
         return
 
     @clearBubblesOnRow(range.end.row)
