@@ -6,6 +6,18 @@
 @import "katex";
 // @import 'octicon-utf-codes';
 
+@green-color: @syntax-color-added;
+
+@red-color: @syntax-color-removed;
+
+atom-text-editor::shadow {
+  .highlight-green .region {
+    background-color: @green-color;
+  }
+  .highlight-red .region {
+    background-color: @red-color;
+  }
+}
 
 .preview-inline.output-bubble {
   @light-preview-bg: fadein(lighten(@syntax-background-color, 40%), 100%);

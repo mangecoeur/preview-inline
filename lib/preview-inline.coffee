@@ -111,6 +111,8 @@ module.exports = PreviewInline =
         if result?
           range = result.range
           view = new MathView(result.text)
+          @addMathView(view, range, result.isBlock)
+          return
         else
           atom.notifications.addWarning("Could not find math at cursor")
           return
@@ -130,6 +132,7 @@ module.exports = PreviewInline =
 
     @clearBubblesOnRow(range.end.row)
 
+
     marker = @editor.markBufferPosition {
       row: range.end.row
       column: range.start.column
@@ -137,13 +140,63 @@ module.exports = PreviewInline =
       invalidate: 'touch'
     }
 
-    # marker.previewBubble = true
     @editor.decorateMarker marker, {
       type: 'overlay'
       item: view
       position: 'tail'
     }
 
+
+    # TODO: maybe use subscriptions here instead
+    @markerBubbleMap[marker.id] = view
+    marker.onDidChange (event) =>
+      if not event.isValid
+        view.destroy()
+        delete @markerBubbleMap[marker.id]
+        marker.destroy()
+
+    # clean up the marker when the bubble is closed
+    view.onClose (event) =>
+      delete @markerBubbleMap[marker.id]
+      marker.destroy()
+
+  addMathView: (view, range, isBlock) ->
+
+    @clearBubblesOnRow(range.end.row)
+
+    mathContent = @editor.markBufferRange range, {
+      invalidate: 'overlap'
+    }
+
+    @editor.decorateMarker mathContent, {
+      type: 'highlight'
+      # item: view
+      # position: 'head'
+      # class:'highlight-green'
+    }
+
+    markRow = if isBlock
+      range.end.row + 1
+    else
+      range.start.row
+
+    # markCol = if isBlock
+
+    marker = @editor.markBufferRange [{
+      row: markRow
+      column: range.start.column
+    },{
+      row: markRow
+      column: range.start.column + 1
+    }], {
+      invalidate: 'overlap'
+    }
+
+    @editor.decorateMarker marker, {
+      type: 'overlay'
+      item: view
+      position: 'tail'
+    }
 
     # TODO: maybe use subscriptions here instead
     @markerBubbleMap[marker.id] = view
@@ -179,53 +232,57 @@ module.exports = PreviewInline =
     else
       throw new Error('no matching scope under cursor')
 
-  getMathAroundCursor: (cursor) ->
-    # get the short scope string for math
+  getMathInline: (scopeString) ->
+    range = @editor.bufferRangeForScopeAtCursor(scopeString)
+    text = @editor.getBuffer().getTextInRange(range)
+    pattern = /\$(.*)\$/
+    result = pattern.exec(text)
+    if result == null
+      throw new Error("Regex match failed")
+    text = result[1]
+    return text: text, range: range, isBlock: false
+
+  getMathBlock: (scopeString) ->
+    range = @editor.bufferRangeForScopeAtCursor(scopeString)
     buffer = @editor.getBuffer()
+    text = buffer.getTextInRange(range)
+
+    minRow = range.start.row
+    maxRow = range.end.row
+    curScope = scopeString
+    curPos = [minRow, 0]
+
+    while scopeTools.scopeContains(curScope, scopeString)
+      minRow = minRow - 1
+      curPos = [minRow, 0]
+      curScope = @editor.scopeDescriptorForBufferPosition(curPos)
+      line = @editor.lineTextForBufferRow(minRow)
+
+    curScope = scopeString
+    curPos = [maxRow, 0]
+
+    while scopeTools.scopeContains(curScope, scopeString)
+      maxRow = maxRow + 1
+      curPos = [maxRow, 0]
+      curScope = @editor.scopeDescriptorForBufferPosition(curPos)
+      line = @editor.lineTextForBufferRow(minRow)
+
+    range = new Range(new Point(minRow + 2, 0), new Point(maxRow - 2 , 9999 ))
+
+    text = buffer.getTextInRange(range)
+
+    return text: text, range: range, isBlock: true
+
+  getMathAroundCursor: (cursor) ->
     scope = cursor.getScopeDescriptor()
 
     scopeString = scopeTools.scopeContainsOne(scope, @mathInlineScopes)
-
     if scopeString
-      range = @editor.bufferRangeForScopeAtCursor(scopeString)
-      text = buffer.getTextInRange(range)
-      pattern = /\$(.*)\$/
-      result = pattern.exec(text)
-      if result == null
-        throw new Error("Regex match failed")
-      text = result[1]
-      return text: text, range: range
+      return @getMathInline(scopeString)
     else
       scopeString = scopeTools.scopeContainsOne(scope, @mathBlockScopes)
       if scopeString
-        range = @editor.bufferRangeForScopeAtCursor(scopeString)
-        text = buffer.getTextInRange(range)
-
-        minRow = range.start.row
-        maxRow = range.end.row
-        curScope = scope
-        curPos = [minRow, 0]
-
-        while scopeTools.scopeContains(curScope, scopeString)
-          minRow = minRow - 1
-          curPos = [minRow, 0]
-          curScope = @editor.scopeDescriptorForBufferPosition(curPos)
-          line = @editor.lineTextForBufferRow(minRow)
-
-        curScope = scope
-        curPos = [maxRow, 0]
-
-        while scopeTools.scopeContains(curScope, scopeString)
-          maxRow = maxRow + 1
-          curPos = [maxRow, 0]
-          curScope = @editor.scopeDescriptorForBufferPosition(curPos)
-          line = @editor.lineTextForBufferRow(minRow)
-
-        range = new Range(new Point(minRow + 2, 0), new Point(maxRow - 2 , 9999 ))
-
-        text = buffer.getTextInRange(range)
-
-        return text: text, range: range
+        @getMathBlock(scopeString)
       else
         return null
 
