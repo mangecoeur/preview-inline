@@ -1,3 +1,8 @@
+## NEXT
+- Added option for language associate (makes it possible to add other languages in future)
+- Preview box should follow math as you type
+- Math preview updates as you type
+
 ## 0.3.3
 - Support for raw code and tex blocks
 

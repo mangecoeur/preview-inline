@@ -28,7 +28,7 @@ class MathView extends View
 
 
   generateMath: (mathText) ->
-    @container[0].innerHTML = ''
+    @container[0].innerHTML = "<div class: 'loading loading-spinner-medium inline-block'></div>"
     try
       katex.render(mathText, @container[0])
     catch error

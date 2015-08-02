@@ -192,12 +192,12 @@ module.exports = PreviewInline =
       markerList = @editor.findMarkers({containsBufferPosition: pos})
       for item in markerList
         if item.id == mathContent.id
-          marker = item
+          mathMarker = item
           break
-      if not marker
-        return
-      text = @editor.getTextInBufferRange(marker.getBufferRange())
-      view.generateMath(text)
+
+      if mathMarker?
+        text = @editor.getTextInBufferRange(mathContent.getBufferRange())
+        view.generateMath(text)
 
     mathContent.onDidChange (event) =>
       if not event.isValid
