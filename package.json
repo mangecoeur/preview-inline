@@ -1,7 +1,7 @@
 {
   "name": "preview-inline",
   "main": "./lib/preview-inline",
-  "version": "0.3.3",
+  "version": "0.4.0",
   "description": "Inline preview of LaTeX maths and images in markdown files",
   "keywords": [
     "markdown",
@@ -22,17 +22,17 @@
     "space-pen": "^5.1.1"
   },
   "coffeelintConfig": {
-    "indentation" : {
-        "level" : "error",
-        "value" : 2
+    "indentation": {
+      "level": "error",
+      "value": 2
     },
-    "line_endings" : {
-        "value" : "unix",
-        "level" : "error"
+    "line_endings": {
+      "value": "unix",
+      "level": "error"
     },
     "max_line_length": {
-      "value" : 120,
-      "level" : "warn"
+      "value": 120,
+      "level": "warn"
     }
   }
 }
