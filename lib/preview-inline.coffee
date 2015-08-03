@@ -9,7 +9,6 @@ scopeTools = require './scope-tools'
 # next
 # TODO: show all image or math previews for current document
 # TODO: support other languages that have math scopes
-# TODO instead of specific markdown scope selectors, use lang:selector map
 # FIXME: make it so the image preview aligns correctly with soft-wrap lines
 
 urlPattern = ///

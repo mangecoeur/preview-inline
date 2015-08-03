@@ -1,4 +1,5 @@
-## NEXT
+## 0.4.0
+- RELEASE CANDIDATE pending more in-use testing + bug tracking
 - Added option for language associate (makes it possible to add other languages in future)
 - Preview box should follow math as you type
 - Math preview updates as you type
