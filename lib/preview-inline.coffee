@@ -182,13 +182,11 @@ module.exports = PreviewInline =
       position: 'tail'
     }
 
-    # TODO: maybe use subscriptions here instead
-    @markerBubbleMap[marker.id] = {view: view, mathRegion: mathContent.id}
-
     # add a listener to track changes to text
     editorListener = @editor.onDidStopChanging (event) =>
       pos = @editor.getCursorBufferPosition()
       markerList = @editor.findMarkers({containsBufferPosition: pos})
+      # FIXME this could be more elegant
       for item in markerList
         if item.id == mathContent.id
           mathMarker = item
@@ -197,29 +195,27 @@ module.exports = PreviewInline =
       if mathMarker?
         text = @editor.getTextInBufferRange(mathContent.getBufferRange())
         view.generateMath(text)
+    # TODO: maybe use subscriptions here instead
+    @markerBubbleMap[marker.id] = {
+      view: view,
+      mathRegion: mathContent.id,
+      editListener: editorListener}
 
     mathContent.onDidChange (event) =>
       if not event.isValid
         editorListener.dispose()
         view.destroy()
-        delete @markerBubbleMap[marker.id]
         marker.destroy()
         mathContent.destroy()
-      else
-        # @editor.decorateMarker mathContent, {
-        #   type: 'highlight'
-        #   class: 'highlight-green'
-        # }
-        text = @editor.getTextInBufferRange(range)
-        view.generateMath(text)
+        delete @markerBubbleMap[marker.id]
 
     marker.onDidChange (event) =>
       if not event.isValid
         editorListener.dispose()
         view.destroy()
-        delete @markerBubbleMap[marker.id]
         marker.destroy()
         mathContent.destroy()
+        delete @markerBubbleMap[marker.id]
 
 
     # clean up the marker when the bubble is closed
