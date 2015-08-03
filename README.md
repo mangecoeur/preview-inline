@@ -23,6 +23,5 @@ Contributions via pull request are welcome.
 
 Non-exhaustive todo list:
 
-- [ ] Live update of maths as you type with small delay
 - [ ] better support for non-markdown files
 - [ ] More test coverage
