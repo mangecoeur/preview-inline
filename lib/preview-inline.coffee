@@ -20,6 +20,11 @@ urlPattern = ///
   (\#[-a-z\d_]*)?$)                             # fragment locater
 ///gi
 
+
+_destroyThese = (elements...) ->
+  for el in elements
+    el.destroy()
+
 module.exports = PreviewInline =
   config:
     scope:
@@ -37,33 +42,48 @@ module.exports = PreviewInline =
 
   activate: (state) ->
     @subscriptions = new CompositeDisposable
+    @commands = new CompositeDisposable
 
-    # Register command that toggles this view
-    @subscriptions.add atom.commands.add 'atom-workspace',
+    # TODO figure out how to show/hide commands for grammars
+    @subscriptions.add atom.commands.add 'atom-text-editor',
         'preview-inline:show': => @showPreview()
         'preview-inline:clear': => @clearPreviews()
+    @subscriptions.add(atom.workspace.observeActivePaneItem( (pane) =>
+      @updateCurrentEditor(pane)))
 
-    @subscriptions.add(atom.workspace.observeActivePaneItem(
-      @updateCurrentEditor.bind(this)))
+    @active = false
 
     @editor = atom.workspace.getActiveTextEditor()
 
   deactivate: ->
     @subscriptions.dispose()
+    @commands.dispose()
     @clearPreviews()
 
   serialize: ->
     # imageInlineViewState: @imageInlineView.serialize()
 
-  updateCurrentEditor: (currentPaneItem) ->
-    return if not currentPaneItem? or currentPaneItem is @editor
+  updateCurrentEditor: (editor) ->
+    # return if not editor? or editor is @editor
+    @editor = editor
+    rootScope = editor.getRootScopeDescriptor()
 
-    @editor = currentPaneItem
+    if not scopeTools.scopeIn(rootScope.toString(), atom.config.get("preview-inline.scope"))
+      ## TODO: idea is to remove from commands pallet, but doesn't seem to work
+      # @commands.dispose()
+      @active = false
+    else
+      # @commands.add atom.commands.add 'atom-text-editor',
+      #     'preview-inline:show': => @showPreview()
+      #     'preview-inline:clear': => @clearPreviews()
+      @active = true
 
   clearPreviews: ->
+    return if not @active
     for markerId, item of @markerBubbleMap
       item.view.destroy()
     @markerBubbleMap = {}
+    return
 
   clearBubblesOnRow: (row) ->
     buffer = @editor.getBuffer()
@@ -73,11 +93,7 @@ module.exports = PreviewInline =
         delete @markerBubbleMap[marker.id]
 
   showPreview: () ->
-    rootScope = @editor.getRootScopeDescriptor()
-
-    if not scopeTools.scopeIn(rootScope.toString(), atom.config.get("preview-inline.scope"))
-      return
-
+    return if not @active
     buffer = @editor.getBuffer()
     cursor = @editor.getLastCursor()
 
@@ -163,7 +179,6 @@ module.exports = PreviewInline =
     else
       range.start.row
 
-    # markCol = if isBlock
     @clearBubblesOnRow(markRow)
 
     marker = @editor.markBufferRange [{
@@ -195,35 +210,31 @@ module.exports = PreviewInline =
       if mathMarker?
         text = @editor.getTextInBufferRange(mathContent.getBufferRange())
         view.generateMath(text)
+
     # TODO: maybe use subscriptions here instead
     @markerBubbleMap[marker.id] = {
-      view: view,
-      mathRegion: mathContent.id,
-      editListener: editorListener}
+      view: view
+      mathRegion: mathContent.id
+      # editListener: editorListener
+    }
 
     mathContent.onDidChange (event) =>
       if not event.isValid
         editorListener.dispose()
-        view.destroy()
-        marker.destroy()
-        mathContent.destroy()
+        _destroyThese(view, marker, mathContent)
         delete @markerBubbleMap[marker.id]
 
     marker.onDidChange (event) =>
       if not event.isValid
         editorListener.dispose()
-        view.destroy()
-        marker.destroy()
-        mathContent.destroy()
+        _destroyThese(view, marker, mathContent)
         delete @markerBubbleMap[marker.id]
-
 
     # clean up the marker when the bubble is closed
     view.onClose (event) =>
       delete @markerBubbleMap[marker.id]
-      marker.destroy()
+      _destroyThese(marker, mathContent)
       editorListener.dispose()
-
 
   mdImageView: (text) ->
     # by default the gfm selection starts/ends with brakets, remove
@@ -231,9 +242,8 @@ module.exports = PreviewInline =
     result = pattern.exec(text)
     if result == null
       throw new Error("Regex match failed")
-    linkURL = result[1]
 
-    linkURL = @parseImageLocation(linkURL,
+    linkURL = @parseImageLocation(result[1],
                                   path.dirname(@editor.getPath()))
     view = new ImageView(linkURL)
     return view

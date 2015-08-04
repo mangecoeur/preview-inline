@@ -37,7 +37,7 @@ describe "PreviewInline", ->
 
   describe "PreviewInline::clearPreviews", ->
     it "works", ->
-      expect(PreviewInline.clearPreviews()).toBeTruthy()
+      expect(PreviewInline.clearPreviews()).toBeFalsy()
 
   describe "PreviewInline::parseImageLocation", ->
     it "parses a url", ->
