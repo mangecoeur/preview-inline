@@ -64,19 +64,21 @@ module.exports = PreviewInline =
     # imageInlineViewState: @imageInlineView.serialize()
 
   updateCurrentEditor: (editor) ->
-    # return if not editor? or editor is @editor
+    return if not editor? or editor is @editor
     @editor = editor
-    rootScope = editor.getRootScopeDescriptor()
-
-    if not scopeTools.scopeIn(rootScope.toString(), atom.config.get("preview-inline.scope"))
-      ## TODO: idea is to remove from commands pallet, but doesn't seem to work
-      # @commands.dispose()
-      @active = false
-    else
+    rootScope =
       # @commands.add atom.commands.add 'atom-text-editor',
       #     'preview-inline:show': => @showPreview()
       #     'preview-inline:clear': => @clearPreviews()
+    if editor.getRootScopeDescriptor and scopeTools.scopeIn(
+      editor.getRootScopeDescriptor().toString(),
+            atom.config.get("preview-inline.scope"))
+      ## TODO: idea is to remove from commands pallet, but doesn't seem to work
+      # @commands.dispose()
       @active = true
+    else
+
+      @active = false
 
   clearPreviews: ->
     return if not @active
