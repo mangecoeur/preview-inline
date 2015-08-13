@@ -214,7 +214,10 @@ module.exports = PreviewInline =
         if not isBlock
           pattern = /\$(.*)\$/
           result = pattern.exec(text)
-          text = result[1]
+          if result
+            text = result[1]
+          else
+            @deletePreview(marker, mathContent, editorListener)
         view.generateMath(text)
 
     # TODO: maybe use subscriptions here instead
@@ -226,21 +229,20 @@ module.exports = PreviewInline =
 
     mathContent.onDidChange (event) =>
       if not event.isValid
-        editorListener.dispose()
-        _destroyThese(view, marker, mathContent)
-        delete @markerBubbleMap[marker.id]
+        @deletePreview(marker, mathContent, editorListener)
 
     marker.onDidChange (event) =>
       if not event.isValid
-        editorListener.dispose()
-        _destroyThese(view, marker, mathContent)
-        delete @markerBubbleMap[marker.id]
+        @deletePreview(marker, mathContent, editorListener)
 
     # clean up the marker when the bubble is closed
     view.onClose (event) =>
-      delete @markerBubbleMap[marker.id]
-      _destroyThese(marker, mathContent)
-      editorListener.dispose()
+      @deletePreview(marker, mathContent, editorListener)
+
+  deletePreview: (marker, mathContent, editorListener) ->
+    delete @markerBubbleMap[marker.id]
+    _destroyThese(marker, mathContent)
+    editorListener.dispose()
 
   mdImageView: (text) ->
     # by default the gfm selection starts/ends with brakets, remove
