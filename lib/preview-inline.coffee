@@ -211,6 +211,10 @@ module.exports = PreviewInline =
 
       if mathMarker?
         text = @editor.getTextInBufferRange(mathContent.getBufferRange())
+        if not isBlock
+          pattern = /\$(.*)\$/
+          result = pattern.exec(text)
+          text = result[1]
         view.generateMath(text)
 
     # TODO: maybe use subscriptions here instead

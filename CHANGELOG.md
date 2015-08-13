@@ -1,3 +1,6 @@
+## 0.4.2
+- fix for inline math live update
+
 ## 0.4.1
 - fixed bug with multiple open previews
 
