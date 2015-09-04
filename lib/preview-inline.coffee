@@ -10,6 +10,7 @@ scopeTools = require './scope-tools'
 # TODO: show all image or math previews for current document
 # TODO: support other languages that have math scopes
 # FIXME: make it so the image preview aligns correctly with soft-wrap lines
+# FIXME:  Uncaught TypeError: undefined is not a function on 86 - associate bubble lists with editor, clear accordingly
 
 urlPattern = ///
   ^((https?:\/\/)                              # protocol (optional)
@@ -29,13 +30,14 @@ module.exports = PreviewInline =
   config:
     scope:
       type: 'array'
-      default: ['.source.gfm']
+      default: ['.source.gfm', '.text.tex.latex']
       items:
         type: 'string'
   mathBlockScopes: ['markup.math.block',
                   'markup.raw.gfm',
-                  'markup.code.latex.gfm']
-  mathInlineScopes: ['markup.math.inline']
+                  'markup.code.latex.gfm',
+                  'string.other.math.block.tex']
+  mathInlineScopes: ['markup.math.inline', 'string.other.math.tex']
   imageScopes: ["markup.underline.link.gfm"]
   subscriptions: null
   markerBubbleMap: {}

@@ -23,7 +23,7 @@ $$
 And this is some inline math $T = \frac{x}{2}$ that should also work
 
 
-
+$$1 + \alpha$$
 
 
 ![on buffer line 5](/Users/jonathanchambers/Pictures/gravatar.jpg)
