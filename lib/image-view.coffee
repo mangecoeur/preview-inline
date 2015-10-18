@@ -5,10 +5,11 @@
 module.exports =
 class ImageView extends View
   @content: (imageLocation)  ->
-    @div class: 'preview-inline output-bubble image', =>
+    # ImageView is born ready
+    @div class: 'preview-inline output-bubble image ready', =>
       @div class: 'action-buttons', =>
-        @div class: 'close icon icon-x', click: 'destroy'
-        # @div class: ['open-ext', 'icon', 'icon-x'], click: 'open'
+        @div class: 'btn btn-error close-preview inline-block-tight', click: 'destroy', =>
+          @span class: 'icon icon-x'
       @div class: 'contents', =>
         @img class: 'image-element', outlet: "image",
          src: imageLocation,
