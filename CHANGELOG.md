@@ -1,3 +1,10 @@
+## 0.5.0
+- Removed KaTeX rendering, only use mathjax for improved display consistency
+- Use SVG rendering for speed/consistency
+- Use linter-themed bubbles (dark style)
+- "Loading" animations for Tex rendering
+- Updated Mathjax to 2.6 beta
+
 ## 0.4.3
 - hotfix
 

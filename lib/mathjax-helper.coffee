@@ -18,7 +18,8 @@ module.exports =
     try
       # script.src  = "atom://preview-inline/resources/MathJax-custom/MathJax.js?delayStartupUntil=configured"
       script.src  = path.join(__dirname, "..", "resources",
-                              "MathJax-custom",
+                              # "MathJax-custom",
+                              "mathjax-svg",
                               "MathJax.js?delayStartupUntil=configured" )
       document.getElementsByTagName("head")[0].appendChild(script)
     catch error
@@ -34,9 +35,11 @@ module.exports =
   #   [element](https://developer.mozilla.org/en-US/docs/Web/API/element) for
   #   details on DOM elements.
   #
-  mathProcessor: (domElements) ->
+  mathProcessor: (domElements, cb) ->
     if MathJax?
       MathJax.Hub.Queue ["Typeset", MathJax.Hub, domElements]
+      if cb?
+        MathJax.Hub.Queue(cb)
 
     return
 
@@ -46,11 +49,15 @@ module.exports =
 #
 configureMathJax = ->
   MathJax.Hub.Config
-    jax: ["input/TeX","output/HTML-CSS"]
+    # jax: ["input/TeX","output/HTML-CSS"]
+    jax: ["input/TeX","output/SVG"]
     extensions: []
     TeX:
       extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
     messageStyle: "none"
     showMathMenu: false
+    SVG:
+      scale: 120
+
   MathJax.Hub.Configured()
   return

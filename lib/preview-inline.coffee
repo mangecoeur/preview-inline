@@ -6,7 +6,7 @@ ImageView = require './image-view'
 MathView = require './math-view'
 scopeTools = require './scope-tools'
 
-# next
+# TODO: clean up TEX support, incl displaymath \[ and \( syntax for LaTex (vs $$ used in Tex)
 # TODO: show all image or math previews for current document
 # TODO: support other languages that have math scopes
 # FIXME: make it so the image preview aligns correctly with soft-wrap lines
@@ -39,6 +39,7 @@ module.exports = PreviewInline =
                   'string.other.math.block.tex']
   mathInlineScopes: ['markup.math.inline', 'string.other.math.tex']
   imageScopes: ["markup.underline.link.gfm"]
+  inlineMathPattern: /\$(.*)\$/
   subscriptions: null
   markerBubbleMap: {}
 
@@ -269,8 +270,8 @@ module.exports = PreviewInline =
   getMathInline: (scopeString) ->
     range = @editor.bufferRangeForScopeAtCursor(scopeString)
     text = @editor.getBuffer().getTextInRange(range)
-    pattern = /\$(.*)\$/
-    result = pattern.exec(text)
+
+    result = @inlineMathPattern.exec(text)
     if result == null
       throw new Error("Regex match failed")
     text = result[1]

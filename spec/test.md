@@ -14,8 +14,8 @@ $$
 
 $$
 \Phi = \begin{cases}
-\Phi_L - G_{sol} \text{ if } \Phi_L \geq G_{sol}\\
-\Phi_L \text{ if }  0 <\Phi_L \leq G_{sol}\\
+\Phi_L - G_{sol } \text{ if } \Phi_L \geq G_{sol}\\
+\Phi_L \text{ if }  0 + <\Phi_L \leq G_{sol}\\
 0 \text{ otherwise }
 \end{cases}
 $$
@@ -26,11 +26,9 @@ And this is some inline math $T = \frac{x}{2}$ that should also work
 $$1 + \alpha$$
 
 
-![on buffer line 5](/Users/jonathanchambers/Pictures/gravatar.jpg)
+![on buffer line 29](test-image.jpg)
 
-![on buffer line 7](test-image.jpg)
-
-![is an invalid image on line 9](05.jpg)
+![is an invalid image on line 31](05.jpg)
 
 ![is an image url on line 11](http://imgs.xkcd.com/comics/the_martian.png)
 

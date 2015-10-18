@@ -3,7 +3,7 @@
 // See https://github.com/atom/atom-dark-ui/blob/master/styles/ui-variables.less
 // for a full listing of what's available.
 @import "ui-variables";
-@import "katex";
+// @import "katex";
 // @import 'octicon-utf-codes';
 
 @green-color: @syntax-color-added;
@@ -19,13 +19,18 @@ atom-text-editor::shadow {
   }
 }
 
+
 .preview-inline.output-bubble {
+  // @preview-bg: lighten(@syntax-background-color, 43%);
+
   @light-preview-bg: fadein(lighten(@syntax-background-color, 40%), 100%);
   @dark-preview-bg: fadein(lighten(@syntax-background-color, 15%), 100%);
   @preview-bg: contrast(@syntax-text-color, @dark-preview-bg, @light-preview-bg, 20%);
-  // @preview-bg: lighten(@syntax-background-color, 43%);
   @preview-fg: @syntax-text-color;
 
+  // @linter-inline-link: fade(@base-background-color, 66%);
+  @preview-fg: @base-background-color;
+  @preview-bg: @text-color;
   // @light-preview-bg: fadein(lighten(@syntax-background-color, 40%), 100%);
   // @dark-preview-bg: fadein(darken(@syntax-background-color, 15%), 100%);
   // @preview-bg: contrast(@syntax-text-color, @dark-preview-bg, @light-preview-bg, 43%);
@@ -46,8 +51,14 @@ atom-text-editor::shadow {
   background: @preview-bg;
   box-shadow: 0 1px 3px hsla(0, 0, 0%, 0.4);
   font-size: @font-size;
-  transition: opacity 300ms;
-
+  max-width: 5em;
+  max-height: 3em;
+  // transition: opacity 300ms, max-width 2s, max-height 2s, background-color 2s, transform 2s;
+  // transition: width 2s, height 2s;
+  // -webkit-transition: all 1s ease-in-out;
+  // -moz-transition: all 1s ease-in-out;
+  // -o-transition: all 1s ease-in-out;
+  transition: max-width 300ms linear, max-height 300ms ease-in-out;
   &.transparent {
     opacity: 0.2;
   }
@@ -60,6 +71,30 @@ atom-text-editor::shadow {
     left: 0;
     border: 4px solid;
     border-color: transparent transparent @preview-bg @preview-bg;
+  }
+
+  .math-element {
+    visibility: hidden;
+    transition: visibility 0s;
+  }
+  .loading {
+    display: inline-block;
+    visibility: visible;
+  }
+
+  &.ready {
+    // width: auto;
+    // height:auto;
+    max-width: 800px;
+    max-height: 300px;
+
+    .loading {
+      display: none;
+    }
+
+    .math-element {
+      visibility: visible;
+    }
   }
 
   .action-buttons {
@@ -80,26 +115,26 @@ atom-text-editor::shadow {
       line-height: 1.2em;
       text-align: center;
       box-shadow: 0 0 2px 0px rgba(0,0,0,0.5);
-      // margin: 0;
+      margin: 0;
       &::before {
         margin:0;
       }
     }
-
-    .open-ext {}
   }
 
   .contents {
+    min-width: 1.5em;
     .math-element {
       // font-size: @font-size * 1.3
     }
 
-    .MathJax_Display {
+    .MathJax_Display,
+    .MathJax_SVG_Display {
       margin: 0;
     }
 
     .MathJax {
-      font-size: @font-size * 1.4
+      font-size: @font-size * 1.5
     }
 
     .katex {
@@ -107,8 +142,12 @@ atom-text-editor::shadow {
     }
 
 
-    img, svg {
+    img {
         background-color: white;
+    }
+
+    svg {
+      background-color: rgba(0, 0, 0, 0);
     }
 
     video, img, svg {
@@ -117,4 +156,62 @@ atom-text-editor::shadow {
         overflow: scroll;
     }
   }
+
+  .loading,
+  .loading:before,
+  .loading:after {
+    background: @button-bg;
+    animation: load1 800ms infinite ease-in-out;
+    width: 2px;
+    height: 1.4em;
+  }
+  .loading:before,
+  .loading:after {
+    position: absolute;
+    top: 0;
+    content: '';
+  }
+  .loading:before {
+    left: -0.4em;
+    animation-delay: -0.3s;
+  }
+  .loading {
+    text-indent: -9999em;
+    margin: 8px 5px;
+    position: relative;
+    font-size: 11px;
+    -webkit-transform: translateZ(0);
+    -ms-transform: translateZ(0);
+    transform: translateZ(0);
+    -webkit-animation-delay: -0.16s;
+    animation-delay: -0.16s;
+  }
+  .loading:after {
+    left: 0.4em;
+  }
+  @-webkit-keyframes load1 {
+    0%,
+    80%,
+    100% {
+      box-shadow: 0 0 @button-bg;
+      height: 1.4em;
+    }
+    40% {
+      box-shadow: 0 -0.5em @button-bg;
+      height: 1.5em;
+    }
+  }
+  @keyframes load1 {
+    0%,
+    80%,
+    100% {
+      box-shadow: 0 0 @button-bg;
+      height: 1.4em;
+    }
+    40% {
+      box-shadow: 0 -0.5em @button-bg;
+      height: 1.5em;
+    }
+  }
+
 }
