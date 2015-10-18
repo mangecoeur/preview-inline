@@ -25,10 +25,9 @@ atom-text-editor::shadow {
 
   @light-preview-bg: fadein(lighten(@syntax-background-color, 40%), 100%);
   @dark-preview-bg: fadein(lighten(@syntax-background-color, 15%), 100%);
-  @preview-bg: contrast(@syntax-text-color, @dark-preview-bg, @light-preview-bg, 20%);
-  @preview-fg: @syntax-text-color;
+  // @preview-bg: contrast(@syntax-text-color, @dark-preview-bg, @light-preview-bg, 20%);
+  // @preview-fg: @syntax-text-color;
 
-  // @linter-inline-link: fade(@base-background-color, 66%);
   @preview-fg: @base-background-color;
   @preview-bg: @text-color;
   // @light-preview-bg: fadein(lighten(@syntax-background-color, 40%), 100%);
@@ -55,13 +54,8 @@ atom-text-editor::shadow {
   max-height: 3em;
   // transition: opacity 300ms, max-width 2s, max-height 2s, background-color 2s, transform 2s;
   // transition: width 2s, height 2s;
-  // -webkit-transition: all 1s ease-in-out;
-  // -moz-transition: all 1s ease-in-out;
-  // -o-transition: all 1s ease-in-out;
   transition: max-width 300ms linear, max-height 300ms ease-in-out;
-  &.transparent {
-    opacity: 0.2;
-  }
+
 
   // pointer arrow
   &::before {
@@ -75,7 +69,8 @@ atom-text-editor::shadow {
 
   .math-element {
     visibility: hidden;
-    transition: visibility 0s;
+    transition: visibility 0s, opacity 200ms;
+    // opacity: 0.2;
   }
   .loading {
     display: inline-block;
@@ -94,6 +89,7 @@ atom-text-editor::shadow {
 
     .math-element {
       visibility: visible;
+      // opacity: 1;
     }
   }
 
@@ -103,22 +99,23 @@ atom-text-editor::shadow {
     flex-direction: column;
     padding-right: 8px;
 
-    .close {
-      color: @text-color;
-      background-color: @button-bg;
-      border-radius: @component-border-radius;
-      // border-color: @button-border-color;
-      // // border-width: 1px;
-      cursor: pointer;
-      width: 1.2em;
-      height: 1.2em;
-      line-height: 1.2em;
+    .close-preview {
+      // color: @text-color;
+      // background-color: @button-bg;
+      // border-radius: @component-border-radius;
+      // // border-color: @button-border-color;
+      // // // border-width: 1px;
+      width: 2em;
+      height: 2em;
+      padding: 0 3px; 
+
+      line-height: 2em;
       text-align: center;
-      box-shadow: 0 0 2px 0px rgba(0,0,0,0.5);
-      margin: 0;
-      &::before {
-        margin:0;
-      }
+      // box-shadow: 0 0 2px 0px rgba(0,0,0,0.5);
+      // margin: 0;
+      // &::before {
+      //   margin:0;
+      // }
     }
   }
 
@@ -160,7 +157,7 @@ atom-text-editor::shadow {
   .loading,
   .loading:before,
   .loading:after {
-    background: @button-bg;
+    background: @preview-fg;
     animation: load1 800ms infinite ease-in-out;
     width: 2px;
     height: 1.4em;
@@ -180,10 +177,7 @@ atom-text-editor::shadow {
     margin: 8px 5px;
     position: relative;
     font-size: 11px;
-    -webkit-transform: translateZ(0);
-    -ms-transform: translateZ(0);
     transform: translateZ(0);
-    -webkit-animation-delay: -0.16s;
     animation-delay: -0.16s;
   }
   .loading:after {
@@ -193,11 +187,11 @@ atom-text-editor::shadow {
     0%,
     80%,
     100% {
-      box-shadow: 0 0 @button-bg;
+      box-shadow: 0 0 @preview-fg;
       height: 1.4em;
     }
     40% {
-      box-shadow: 0 -0.5em @button-bg;
+      box-shadow: 0 -0.5em @preview-fg;
       height: 1.5em;
     }
   }
@@ -205,11 +199,11 @@ atom-text-editor::shadow {
     0%,
     80%,
     100% {
-      box-shadow: 0 0 @button-bg;
+      box-shadow: 0 0 @preview-fg;
       height: 1.4em;
     }
     40% {
-      box-shadow: 0 -0.5em @button-bg;
+      box-shadow: 0 -0.5em @preview-fg;
       height: 1.5em;
     }
   }

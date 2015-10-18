@@ -20,10 +20,11 @@ class MathView extends View
   @content: (mathText)  ->
     @div class: 'preview-inline output-bubble math', =>
       @div class: 'action-buttons', =>
-        @div class: 'close icon icon-x', click: 'destroy'
+        @div class: 'btn btn-error close-preview inline-block-tight', click: 'destroy', =>
+          @span class: 'icon icon-x'
       @div class: 'contents', =>
         @div class: 'math-element', outlet: "container", =>
-          @div class: 'loading loading-spinner-small inline-block'
+          @div class: 'loading loading-spinner-tiny inline-block'
 # outlet: "container",
 
 
