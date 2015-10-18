@@ -1,3 +1,7 @@
+## 0.5.1
+- math preview style tweaks
+- fixes for image preview styles
+
 ## 0.5.0
 - Removed KaTeX rendering, only use mathjax for improved display consistency
 - Use SVG rendering for speed/consistency
