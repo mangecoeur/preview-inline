@@ -6,4 +6,4 @@ describe "ImageView", ->
     it "returns the html element for the math", ->
       image = "test-image.jpg"
       view = new ImageView(image)
-      expect(view).toExist()
+      expect(view.element).toExist()

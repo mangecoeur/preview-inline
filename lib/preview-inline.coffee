@@ -33,6 +33,12 @@ module.exports = PreviewInline =
       default: ['.source.gfm', '.text.tex.latex']
       items:
         type: 'string'
+     previewMode:
+       title: 'Preview mode'
+       description: 'Which previews to show as blocks in the text. Otherwise previews will be shown as overlays.'
+       type: 'string'
+       default: 'except-inline-math'
+       enum: ['all', 'except-inline-math', 'none']
   mathBlockScopes: ['markup.math.block',
                   'markup.raw.gfm',
                   'markup.code.latex.gfm',
@@ -151,11 +157,18 @@ module.exports = PreviewInline =
       invalidate: 'touch'
     }
 
-    @editor.decorateMarker marker, {
-      type: 'overlay'
-      item: view
-      position: 'tail'
-    }
+    if atom.config.get('preview-inline.previewAsOverlay')
+      @editor.decorateMarker marker, {
+        type: 'overlay'
+        item: view
+        position: 'tail'
+      }
+    else
+      @editor.decorateMarker marker, {
+        type: 'block'
+        item: view
+        position: 'after'
+      }
 
 
     # TODO: maybe use subscriptions here instead
@@ -197,11 +210,25 @@ module.exports = PreviewInline =
       invalidate: 'touch'
     }
 
-    @editor.decorateMarker marker, {
-      type: 'overlay'
-      item: view
-      position: 'tail'
-    }
+    overlayMode = false
+
+    if atom.config.get('preview-inline.previewMode') == 'none'
+      overlayMode = true
+    else if !isBlock && atom.config.get('preview-inline.previewMode') == 'except-inline-math'
+      overlayMode = true
+
+    if overlayMode
+      @editor.decorateMarker marker, {
+        type: 'overlay'
+        item: view
+        position: 'tail'
+      }
+    else
+      @editor.decorateMarker marker, {
+        type: 'block'
+        item: view
+        position: 'after'
+      }
 
     # add a listener to track changes to text
     editorListener = @editor.onDidStopChanging (event) =>

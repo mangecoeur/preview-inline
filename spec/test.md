@@ -22,6 +22,8 @@ $$
 
 And this is some inline math $T = \frac{x}{2}$ that should also work
 
+Several inline maths $T = \frac{x}{2}$ that should work $T = \frac{x}{2}$
+
 
 $$1 + \alpha$$
 

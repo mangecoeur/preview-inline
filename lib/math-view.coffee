@@ -7,11 +7,9 @@
 mathjaxHelper = require './mathjax-helper'
 
 # mjAPI = require("../node_modules/MathJax-node/lib/mj-single.js")
-# View = require 'space-pen'
 
 module.exports =
-class MathView #extends View
-
+class MathView
   constructor: (@mathText) ->
     mathjaxHelper.loadMathJax()
 
