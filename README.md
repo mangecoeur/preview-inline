@@ -4,7 +4,8 @@
 
 Preview Latex formula and images embedded directly in your documents - no need to generate a full PDF or HTML preview to check your figures and formula! Works in Markdown (pandoc variety) and Tex files.
 
-![screenshot of image-preview](resources/demo.gif)
+<!-- keep absolute path for atom package page -->
+![screenshot of image-preview](https://raw.githubusercontent.com/mangecoeur/preview-inline/master/resources/demo.gif)
 
 
 # Usage
