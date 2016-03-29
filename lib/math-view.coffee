@@ -1,8 +1,5 @@
 {Emitter} = require 'atom'
-# {View} = require 'space-pen'
 {createElement} = require './util'
-
-# mathjax = require 'MathJax-node'
 
 mathjaxHelper = require './mathjax-helper'
 
@@ -11,7 +8,7 @@ mathjaxHelper = require './mathjax-helper'
 module.exports =
 class MathView
   constructor: (@mathText) ->
-    mathjaxHelper.loadMathJax()
+    # mathjaxHelper.loadMathJax()
 
     @element = createElement('div', {class: 'preview-inline output-bubble math'})
 
