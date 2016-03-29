@@ -1,3 +1,6 @@
+## 0.6.0
+- in the spirit of the npm-dependency meltdown, removed all non-critical dependencies (notably space-pen). Should also result in faster loading.
+
 ## 0.5.1
 - math preview style tweaks
 - fixes for image preview styles

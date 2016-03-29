@@ -1,7 +1,7 @@
 {Emitter} = require 'atom'
-{View} = require 'space-pen'
+# {View} = require 'space-pen'
+{createElement} = require './util'
 
-# katex = require 'katex'
 # mathjax = require 'MathJax-node'
 
 mathjaxHelper = require './mathjax-helper'
@@ -10,58 +10,68 @@ mathjaxHelper = require './mathjax-helper'
 # View = require 'space-pen'
 
 module.exports =
-class MathView extends View
+class MathView #extends View
 
-  initialize: (mathText) ->
-    @generateMath(mathText)
-    @emitter = new Emitter()
+  constructor: (@mathText) ->
     mathjaxHelper.loadMathJax()
 
-  @content: (mathText)  ->
-    @div class: 'preview-inline output-bubble math', =>
-      @div class: 'action-buttons', =>
-        @div class: 'btn btn-error close-preview inline-block-tight', click: 'destroy', =>
-          @span class: 'icon icon-x'
-      @div class: 'contents', =>
-        @div class: 'math-element', outlet: "container", =>
-          @div class: 'loading loading-spinner-tiny inline-block'
-# outlet: "container",
+    @element = createElement('div', {class: 'preview-inline output-bubble math'})
+
+    btns = createElement('div', {class: 'action-buttons'})
+
+    btn = createElement('div', {class: 'btn btn-error close-preview inline-block-tight'})
+    btn.appendChild(createElement('span', {class: 'icon icon-x'}))
+    btn.addEventListener('click', @destroy)
+
+    btns.appendChild(btn)
+
+    contents = createElement('div', {class: 'contents'})
+    @container = createElement('div', {class: 'math-element'})
+    @container.appendChild(createElement('div', {class: 'loading loading-spinner-tiny inline-block'}))
+
+    contents.appendChild(@container)
+
+    @element.appendChild(btns)
+    @element.appendChild(contents)
+
+    @generateMath(mathText)
+    @emitter = new Emitter()
+
+    #
+    # @div class: 'preview-inline output-bubble math', =>
+    #   @div class: 'action-buttons', =>
+    #     @div class: 'btn btn-error close-preview inline-block-tight', click: 'destroy', =>
+    #       @span class: 'icon icon-x'
+    #   @div class: 'contents', =>
+    #     @div class: 'math-element', outlet: "container", =>
+    #       @div class: 'loading loading-spinner-tiny inline-block'
 
 
-  generateMath: (mathText) ->
+  generateMath: (mathText) =>
     @element.classList.remove("ready")
-    # @container[0].innerHTML = "<div class='loading loading-spinner-small inline-block'></div>"
-    # try
-    #   katex.render(mathText, @container[0])
-    # catch error
-    # atom.notifications.addWarning(error.message)
+
     @mathEl = document.createElement('script')
     @mathEl.type='math/tex; mode=display'
     @mathEl.innerHTML = mathText.replace('<br>','')
     mathjaxHelper.mathProcessor(@mathEl, =>
-      # @container[0].innerHTML = ""
-      # @container[0].appendChild(@mathEl)
       @element.classList.add("ready")
       )
-    # @container[0].innerHTML = ""
     # first remove the old child...
-    el = @container[0].querySelector('.MathJax_SVG_Display')
+    el = @container.querySelector('.MathJax_SVG_Display')
     if el?
-      @container[0].removeChild(el)
-      # @container[0].replaceChild(el, @mathEl)
+      @container.removeChild(el)
     # else
-    @container[0].appendChild(@mathEl)
+    @container.appendChild(@mathEl)
 
     # @element.classList.add("ready")
 
-  onClose: (callback) ->
+  onClose: (callback) =>
     @emitter.on 'was-closed', callback
 
-  destroy: ->
+  destroy: =>
     # @element.innerHTML = ''
     @emitter.emit 'was-closed'
     @element.remove()
 
-  #
-  # getElement: ->
-  #   @element
+  getElement: =>
+    @element

@@ -107,6 +107,7 @@ module.exports = PreviewInline =
 
     text = @editor.getSelectedText()
 
+    # var view
     if text != ''
       view = @viewForSelectedText(text)
       range = @editor.getSelectedBufferRange()

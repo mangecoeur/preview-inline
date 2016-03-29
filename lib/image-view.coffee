@@ -1,30 +1,49 @@
 {Emitter} = require 'atom'
+{createElement} = require './util'
 
-{View} = require 'space-pen'
+# {View} = require 'space-pen'
+
+
+# createElement: (tagName, attributes = {}) ->
+#   el = document.createElement(tagName)
+#
+#   for own key, value of attributes
+#     el.setAttribute(key, value)
+#
+#   return el
 
 module.exports =
-class ImageView extends View
-  @content: (imageLocation)  ->
-    # ImageView is born ready
-    @div class: 'preview-inline output-bubble image ready', =>
-      @div class: 'action-buttons', =>
-        @div class: 'btn btn-error close-preview inline-block-tight', click: 'destroy', =>
-          @span class: 'icon icon-x'
-      @div class: 'contents', =>
-        @img class: 'image-element', outlet: "image",
-         src: imageLocation,
+class ImageView #extends View
 
-  initialize: (imageLocation) ->
+  constructor: (@imageLocation)  ->
+    @element = createElement('div', {class: 'preview-inline output-bubble image ready'})
+
+    btns = createElement('div', {class: 'action-buttons'})
+
+    btn = createElement('div', {class: 'btn btn-error close-preview inline-block-tight'})
+    btn.appendChild(createElement('span', {class: 'icon icon-x'}))
+    btn.addEventListener('click', @destroy)
+
+    btns.appendChild(btn)
+
+    contents = createElement('div', {class: 'contents'})
+    contents.appendChild(createElement('img', {class: 'image-element', src: @imageLocation}))
+
+    @element.appendChild(btns)
+    @element.appendChild(contents)
+
     @emitter = new Emitter()
 
-  onClose: (callback) ->
+  # initialize: (imageLocation) ->
+  #   @emitter = new Emitter()
+
+  onClose: (callback) =>
     @emitter.on 'was-closed', callback
 
-  destroy: ->
+  destroy: =>
     # @element.innerHTML = ''
     @emitter.emit 'was-closed'
     @element.remove()
 
-  #
-  # getElement: ->
-  #   @element
+  getElement: =>
+    @element
