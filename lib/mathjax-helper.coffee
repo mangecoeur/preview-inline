@@ -49,8 +49,8 @@ module.exports =
 #
 configureMathJax = ->
   MathJax.Hub.Config
-    jax: ["input/TeX","output/CommonHTML"]
-    # jax: ["input/TeX","output/SVG"]
+    # jax: ["input/TeX","output/CommonHTML"]
+    jax: ["input/TeX","output/SVG"]
     extensions: []
     TeX:
       extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
