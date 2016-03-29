@@ -1,5 +1,7 @@
-## 0.6.0
+## 1.0.0
+- Block decorations! Now requires Atom >1.6.0. Previews will be shown as blocks in between the text. A new option in the settings allows to revery to old behaviour. By default, previews for inline maths are still shown as overlays so that they can align with in-text formula.
 - in the spirit of the npm-dependency meltdown, removed all non-critical dependencies (notably space-pen). Should also result in faster loading.
+- bumped mathjax to latest version.
 
 ## 0.5.1
 - math preview style tweaks
