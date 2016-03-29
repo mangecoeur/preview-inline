@@ -19,7 +19,7 @@ module.exports =
       # script.src  = "atom://preview-inline/resources/MathJax-custom/MathJax.js?delayStartupUntil=configured"
       script.src  = path.join(__dirname, "..", "resources",
                               # "MathJax-custom",
-                              "mathjax-chtml",
+                              "mathjax-svg",
                               "MathJax.js?delayStartupUntil=configured" )
       document.getElementsByTagName("head")[0].appendChild(script)
     catch error
