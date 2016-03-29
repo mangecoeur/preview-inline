@@ -47,3 +47,9 @@ class ImageView #extends View
 
   getElement: =>
     @element
+
+  overlayMode: (modeSwitch) =>
+    if modeSwitch
+      @element.classList.add('overlay')
+    else
+      @element.classList.remove('overlay')

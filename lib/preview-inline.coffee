@@ -6,6 +6,9 @@ ImageView = require './image-view'
 MathView = require './math-view'
 scopeTools = require './scope-tools'
 
+mathjaxHelper = require './mathjax-helper'
+
+
 # TODO: clean up TEX support, incl displaymath \[ and \( syntax for LaTex (vs $$ used in Tex)
 # TODO: show all image or math previews for current document
 # TODO: support other languages that have math scopes
@@ -63,6 +66,8 @@ module.exports = PreviewInline =
     @active = false
 
     @editor = atom.workspace.getActiveTextEditor()
+    mathjaxHelper.loadMathJax()
+
 
   deactivate: ->
     @subscriptions.dispose()
@@ -157,7 +162,8 @@ module.exports = PreviewInline =
       invalidate: 'touch'
     }
 
-    if atom.config.get('preview-inline.previewAsOverlay')
+    if atom.config.get('preview-inline.previewMode') == 'none'
+      # view.overlayMode(true)
       @editor.decorateMarker marker, {
         type: 'overlay'
         item: view
@@ -218,12 +224,15 @@ module.exports = PreviewInline =
       overlayMode = true
 
     if overlayMode
+      # view.overlayMode(true)
       @editor.decorateMarker marker, {
         type: 'overlay'
         item: view
         position: 'tail'
       }
     else
+      # view.overlayMode(false)
+
       @editor.decorateMarker marker, {
         type: 'block'
         item: view

@@ -35,15 +35,6 @@ class MathView
     @generateMath(mathText)
     @emitter = new Emitter()
 
-    #
-    # @div class: 'preview-inline output-bubble math', =>
-    #   @div class: 'action-buttons', =>
-    #     @div class: 'btn btn-error close-preview inline-block-tight', click: 'destroy', =>
-    #       @span class: 'icon icon-x'
-    #   @div class: 'contents', =>
-    #     @div class: 'math-element', outlet: "container", =>
-    #       @div class: 'loading loading-spinner-tiny inline-block'
-
 
   generateMath: (mathText) =>
     @element.classList.remove("ready")
@@ -73,3 +64,9 @@ class MathView
 
   getElement: =>
     @element
+
+  overlayMode: (modeSwitch) =>
+    if modeSwitch
+      @element.classList.add('overlay')
+    else
+      @element.classList.remove('overlay')
