@@ -97,7 +97,9 @@ module.exports = PreviewInline =
   clearPreviews: ->
     return if not @active
     for markerId, item of @markerBubbleMap
-      item.view.destroy()
+      # console.log(markerId)
+      # console.log(item)
+      item.destroy()
     @markerBubbleMap = {}
     return
 
@@ -105,7 +107,7 @@ module.exports = PreviewInline =
     buffer = @editor.getBuffer()
     for marker in buffer.findMarkers({endRow: row})
       if @markerBubbleMap[marker.id]?
-        @markerBubbleMap[marker.id].view.destroy()
+        @markerBubbleMap[marker.id].destroy()
         delete @markerBubbleMap[marker.id]
 
   showPreview: () ->
@@ -119,10 +121,12 @@ module.exports = PreviewInline =
     text = @editor.getSelectedText()
 
     # var view
+    # If you have selected text already, try to generate a preview for it directly
     if text != ''
       view = @viewForSelectedText(text)
       range = @editor.getSelectedBufferRange()
-
+    # Otherwise try to get the math by selecting the text around the cursor
+    # that matches one of the math scopes
     # TODO: allow you to define a set of languages that support this method
     else
       scope = cursor.getScopeDescriptor()
@@ -179,6 +183,7 @@ module.exports = PreviewInline =
 
     # TODO: maybe use subscriptions here instead
     @markerBubbleMap[marker.id] = view
+
     marker.onDidChange (event) =>
       if not event.isValid
         view.destroy()
@@ -205,7 +210,8 @@ module.exports = PreviewInline =
       range.start.row
 
     @clearBubblesOnRow(markRow)
-
+    # Seperate marker for the bubble
+    # rather than sharing it with the math content.
     marker = @editor.markBufferRange [{
       row: markRow
       column: range.start.column
@@ -261,11 +267,15 @@ module.exports = PreviewInline =
         view.generateMath(text)
 
     # TODO: maybe use subscriptions here instead
-    @markerBubbleMap[marker.id] = {
-      view: view
-      mathRegion: mathContent.id
-      # editListener: editorListener
-    }
+    @markerBubbleMap[marker.id] = view
+    # @markerBubbleMap[marker.id] = {
+    #   view: view
+    #   mathRegion: mathContent.id
+    #   # editListener: editorListener
+    # }
+
+    # Just in case, keep a reference to the mathcontent by gluing it to the view
+    view.mathContent = mathContent
 
     mathContent.onDidChange (event) =>
       if not event.isValid
