@@ -1,7 +1,7 @@
 {
   "name": "preview-inline",
   "main": "./lib/preview-inline",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Inline preview of LaTeX maths and images in markdown files",
   "keywords": [
     "markdown",
