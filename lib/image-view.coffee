@@ -43,7 +43,8 @@ class ImageView #extends View
   destroy: =>
     # @element.innerHTML = ''
     @emitter.emit 'was-closed'
-    @element.remove()
+
+    # @element?.remove()
 
   getElement: =>
     @element

@@ -56,8 +56,13 @@ class MathView
 
   destroy: =>
     # @element.innerHTML = ''
+    # if atom.config.get('preview-inline.previewMode') == 'none'
+    #   @element?.remove()
+
     @emitter.emit 'was-closed'
-    @element.remove()
+
+
+    # @element?.remove()
 
   getElement: =>
     @element
