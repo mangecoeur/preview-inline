@@ -16,6 +16,10 @@ Works with inline maths between `$` signs and blocks between `$$`, in markdown a
 
 You might want to install the [pandoc flavor markdown language](https://atom.io/packages/language-pfm) (`language-pfm` package) first for support for math regions delimitated by '$' or '$$'. Otherwise only raw code and tex blocks in the standard github-markdown should work.
 
+## Updates
+
+- Added support for common Latex environments
+
 # Contribute
 
 Contributions via pull request are welcome.
