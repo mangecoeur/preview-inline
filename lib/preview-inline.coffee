@@ -33,7 +33,7 @@ module.exports = PreviewInline =
   config:
     scope:
       type: 'array'
-      default: ['.source.gfm', '.text.tex.latex']
+      default: ['.source.gfm', '.text.tex.latex', '.text.restructuredtext']
       items:
         type: 'string'
      previewMode:
@@ -43,10 +43,12 @@ module.exports = PreviewInline =
        default: 'except-inline-math'
        enum: ['all', 'except-inline-math', 'none']
   mathBlockScopes: ['markup.math.block',
-                  'markup.raw.gfm',
-                  'markup.code.latex.gfm',
-                  'string.other.math.block.tex']
-  mathInlineScopes: ['markup.math.inline', 'string.other.math.tex']
+                   'meta.function.environment.math.latex',
+                   'markup.raw.gfm',
+                   'markup.code.latex.gfm',
+                   'string.other.math.block',
+               ]
+  mathInlineScopes: ['markup.math.inline', 'string.other.math.tex', 'string.other.math.latex']
   imageScopes: ["markup.underline.link.gfm"]
   inlineMathPattern: /\$(.*)\$/
   subscriptions: null
@@ -319,9 +321,13 @@ module.exports = PreviewInline =
     text = @editor.getBuffer().getTextInRange(range)
 
     result = @inlineMathPattern.exec(text)
+
+    # FIXME: need to adapt to work with RST math
     if result == null
-      throw new Error("Regex match failed")
-    text = result[1]
+      # throw new Error("Regex match failed")
+      text = text
+    else
+      text = result[1]
     return text: text, range: range, isBlock: false
 
   getMathBlock: (scopeString) ->
