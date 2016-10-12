@@ -23,6 +23,7 @@ class MathView
     contents = createElement('div', {class: 'contents'})
     @container = createElement('div', {class: 'math-element'})
     @container.appendChild(createElement('div', {class: 'loading loading-spinner-tiny inline-block'}))
+    @container.appendChild(createElement('div', {class: 'overlay'}))
 
     contents.appendChild(@container)
 

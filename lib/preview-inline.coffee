@@ -89,11 +89,11 @@ module.exports = PreviewInline =
     if editor.getRootScopeDescriptor and scopeTools.scopeIn(
       editor.getRootScopeDescriptor().toString(),
             atom.config.get("preview-inline.scope"))
-      ## TODO: idea is to remove from commands pallet, but doesn't seem to work
-      # @commands.dispose()
+
       @active = true
     else
-
+      ## TODO: idea is to remove from commands pallet, but doesn't seem to work
+      # @commands.dispose()
       @active = false
 
   clearPreviews: ->
@@ -146,9 +146,11 @@ module.exports = PreviewInline =
           return
 
       else if scopeTools.scopeContainsOne(scope, ["markup.underline.link.gfm"])
+        # TODO get screen range
         result = @getTextForScope(".markup.underline.link.gfm")
         range = result.range
         range.start.column = 0
+        point = range
         try
           view = @mdImageView(result.text)
         catch error
@@ -310,9 +312,11 @@ module.exports = PreviewInline =
 
   getTextForScope: (scopeString) ->
     buffer = @editor.getBuffer()
+    # range = @editor.screenRangeForScopeAtCursor(scopeString)
+    # screenRangeForBufferRange(bufferRange)
     range = @editor.bufferRangeForScopeAtCursor(scopeString)
     if range?
-      return text: buffer.getTextInRange(range), range: range
+      return text: buffer.getTextInRange(range), range: @editor.screenRangeForBufferRange(range)
     else
       throw new Error('no matching scope under cursor')
 

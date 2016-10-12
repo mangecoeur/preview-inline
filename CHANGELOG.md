@@ -1,3 +1,6 @@
+## 1.1.1
+- workaround for Atom uncaught error on scroll
+
 ## 1.0.4
 - Fix for uncaught error
 
