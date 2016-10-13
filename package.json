@@ -16,11 +16,10 @@
     "atom": ">=1.6.0 <2.0.0"
   },
   "dependencies": {},
-  "coffeelintConfig": {
-    "indentation": {
-      "level": "error",
-      "value": 2
-    },
+  "devDependencies": {
+    "eslint": "^3.7.0",
+    "eslint-config-google": "^0.6.0"
+  },
     "line_endings": {
       "value": "unix",
       "level": "error"
@@ -29,5 +28,4 @@
       "value": 120,
       "level": "warn"
     }
-  }
 }

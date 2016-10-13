@@ -84,7 +84,7 @@ describe "PreviewInline", ->
       editor.setCursorBufferPosition([23, 5])
       cursor = editor.getLastCursor()
       text = PreviewInline.getMathAroundCursor(cursor)
-      expect(text).toExist()
+      expect(text).toBeTruthy()
 
 
   xdescribe "PreviewInline::showPreview", ->

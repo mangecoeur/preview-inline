@@ -1,0 +1,15 @@
+{
+    "extends": "google",
+    "globals": {
+      "atom": true,
+      "WeakRef": true
+    },
+    "rules" : {
+      "max-len": ["warn", 110],
+      "no-else-return": ["warn"]
+    },
+    "env": {
+        "browser": true,
+        "node": true
+    }
+}
