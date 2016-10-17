@@ -1,8 +1,7 @@
 {
     "extends": "google",
     "globals": {
-      "atom": true,
-      "WeakRef": true
+      "atom": true
     },
     "rules" : {
       "max-len": ["warn", 110],
