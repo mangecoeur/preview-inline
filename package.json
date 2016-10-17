@@ -15,9 +15,6 @@
   "engines": {
     "atom": ">=1.6.0 <2.0.0"
   },
-  "activationCommands": {
-    "atom-workspace": "preview-inline:show"
-  },
   "dependencies": {},
   "devDependencies": {
     "eslint": "^3.7.0",
