@@ -2,7 +2,7 @@
 'context-menu':
   'atom-text-editor[data-grammar="source gfm"]': [
     {
-      'label': 'Inline Preview'
+      'label': 'Preview Inline'
       'command': 'preview-inline:show'
     }
   ]
@@ -10,7 +10,7 @@
   {
     'label': 'Packages'
     'submenu': [
-      'label': 'preview-inline'
+      'label': 'Preview Inline'
       'submenu': [
         {
           'label': 'Show'
