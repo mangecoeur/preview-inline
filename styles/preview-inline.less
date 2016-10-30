@@ -105,29 +105,50 @@ atom-text-editor::shadow {
     display: flex;
     flex-direction: column;
     padding-right: 8px;
+    width: 3em;
 
-    .close-preview {
-      // color: @text-color;
-      // background-color: @button-bg;
-      // border-radius: @component-border-radius;
-      // // border-color: @button-border-color;
-      // // // border-width: 1px;
-      width: 2em;
-      height: 2em;
-      padding: 0 3px;
+      .zoom-btns {
+        .btn {
+          width: 2.5em
+        }
+        .zoom-in {
+          border-top-right-radius: 3px;
+          border-bottom-left-radius: 0px;
+        }
+        .zoom-out {
+          border-top-right-radius: 0px;
+          border-bottom-left-radius: 3px;
+          margin-left: 0px;
+          margin-top: -1px;
+        }
+      }
 
-      line-height: 2em;
-      text-align: center;
-      // box-shadow: 0 0 2px 0px rgba(0,0,0,0.5);
-      // margin: 0;
-      // &::before {
-      //   margin:0;
-      // }
-    }
+      .close-preview {
+        margin-bottom: 0.5em;
+      }
   }
+
 
   .contents {
     min-width: 1.5em;
+    resize: both;
+    overflow: scroll;
+    img {
+
+      background-color: white;
+    }
+
+    svg {
+      background-color: rgba(0, 0, 0, 0);
+    }
+
+    video, img, svg {
+        display: block;
+        height: 400px;
+        overflow: scroll;
+    }
+
+
     .math-element {
       // font-size: @font-size * 1.3
     }
@@ -141,24 +162,6 @@ atom-text-editor::shadow {
       font-size: @font-size * 1.5
     }
 
-    .katex {
-      font-size: @font-size * 1.5
-    }
-
-
-    img {
-        background-color: white;
-    }
-
-    svg {
-      background-color: rgba(0, 0, 0, 0);
-    }
-
-    video, img, svg {
-        display: block;
-        max-height: 400px;
-        overflow: scroll;
-    }
   }
 
   .loading,
