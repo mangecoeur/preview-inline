@@ -18,7 +18,8 @@ You might want to install the [pandoc flavor markdown language](https://atom.io/
 
 ## Updates
 
-- Added support for common Latex environments
+- Added support for common Latex environments for maths
+- Added basic support for Latex images (`\includegraphics{}`)
 
 
 ## See also

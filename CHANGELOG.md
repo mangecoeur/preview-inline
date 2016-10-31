@@ -1,3 +1,14 @@
+## 1.3.0
+- Added zoom controls to image view
+- Added basic support for Tex Images
+
+
+## 1.2.0
+- Converted project to ES6 to be more future proof
+- Tweaks to activation
+- Nicer menu label
+
+
 ## 1.1.1
 - workaround for Atom uncaught error on scroll
 

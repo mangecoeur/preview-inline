@@ -4,15 +4,15 @@
   "version": "1.2.0",
   "description": "Inline preview of LaTeX maths and images in markdown files",
   "keywords": [
-    "markdown",
-    "commonmark",
-    "pandoc",
-    "latex",
-    "image",
     "preview",
-    "inline",
     "math",
-    "block"
+    "image",
+    "markdown",
+    "latex",
+    "commonmark",
+    "inline",
+    "productivity",
+    "academic"
   ],
   "repository": "https://github.com/mangecoeur/preview-inline",
   "license": "MIT",
