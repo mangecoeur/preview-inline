@@ -65,6 +65,27 @@ atom-text-editor::shadow {
   //   border-color: transparent transparent @preview-bg @preview-bg;
   // }
 
+  &.image {
+    .contents {
+      min-width: 1.5em;
+
+      img {
+
+        background-color: white;
+      }
+
+      svg {
+        background-color: rgba(0, 0, 0, 0);
+      }
+
+      video, img, svg {
+          display: block;
+          height: 400px;
+          overflow: scroll;
+      }
+    }
+  }
+
   .math-element {
     visibility: hidden;
     transition: visibility 0s, opacity 200ms;
@@ -101,53 +122,39 @@ atom-text-editor::shadow {
   }
 
   .action-buttons {
-
     display: flex;
     flex-direction: column;
     padding-right: 8px;
     width: 3em;
 
-      .zoom-btns {
-        .btn {
-          width: 2.5em
-        }
-        .zoom-in {
-          border-top-right-radius: 3px;
-          border-bottom-left-radius: 0px;
-        }
-        .zoom-out {
-          border-top-right-radius: 0px;
-          border-bottom-left-radius: 3px;
-          margin-left: 0px;
-          margin-top: -1px;
-        }
+    .zoom-btns {
+      .btn {
+        width: 2.5em
       }
+      .zoom-in {
+        border-top-right-radius: 3px;
+        border-bottom-left-radius: 0px;
+      }
+      .zoom-out {
+        border-top-right-radius: 0px;
+        border-bottom-left-radius: 3px;
+        margin-left: 0px;
+        margin-top: -1px;
+      }
+    }
 
-      .close-preview {
-        margin-bottom: 0.5em;
-      }
+    .close-preview {
+      width: 2.5em;
+
+      margin-bottom: 0.5em;
+    }
   }
 
 
   .contents {
     min-width: 1.5em;
-    resize: both;
-    overflow: scroll;
-    img {
-
-      background-color: white;
-    }
-
-    svg {
-      background-color: rgba(0, 0, 0, 0);
-    }
-
-    video, img, svg {
-        display: block;
-        height: 400px;
-        overflow: scroll;
-    }
-
+    // resize: both;
+    // overflow: scroll;
 
     .math-element {
       // font-size: @font-size * 1.3
