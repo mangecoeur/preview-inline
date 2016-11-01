@@ -28,7 +28,9 @@ Several inline maths $T = \frac{x}{2}$ that should work $T = \frac{x}{2}$
 $$1 + \alpha$$
 
 
-![on buffer line 29](test-image.jpg)
+![on buffer line](test-image.jpg)
+
+![on buffer line](test-image)
 
 ![is an invalid image on line 31](05.jpg)
 
