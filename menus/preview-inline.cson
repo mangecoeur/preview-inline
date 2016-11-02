@@ -6,6 +6,12 @@
       'command': 'preview-inline:show'
     }
   ]
+  'atom-text-editor[data-grammar="text tex latex"]': [
+    {
+        'label': 'Preview Inline'
+        'command': 'preview-inline:show'
+    }
+  ]
 'menu': [
   {
     'label': 'Packages'
