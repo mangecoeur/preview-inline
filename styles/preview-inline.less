@@ -5,38 +5,19 @@
 @import "ui-variables";
 // @import 'octicon-utf-codes';
 
-@green-color: @syntax-color-added;
-
-@red-color: @syntax-color-removed;
-
-atom-text-editor::shadow {
-  .highlight-green .region {
-    background-color: @green-color;
-  }
-  .highlight-red .region {
-    background-color: @red-color;
-  }
-}
-
 
 .preview-inline.output-bubble {
-  // @preview-bg: lighten(@syntax-background-color, 43%);
+  @preview-fg: @base-background-color;
+  @preview-bg: @text-color;
 
-  @light-preview-bg: fadein(lighten(@syntax-background-color, 40%), 100%);
-  @dark-preview-bg: fadein(lighten(@syntax-background-color, 15%), 100%);
+  // @light-preview-bg: fadein(lighten(@syntax-background-color, 40%), 100%);
+  // @dark-preview-bg: fadein(lighten(@syntax-background-color, 15%), 100%);
   // @preview-bg: contrast(@syntax-text-color, @dark-preview-bg, @light-preview-bg, 20%);
   // @preview-fg: @syntax-text-color;
 
-  @preview-fg: @base-background-color;
-  @preview-bg: @text-color;
   // @light-preview-bg: fadein(lighten(@syntax-background-color, 40%), 100%);
   // @dark-preview-bg: fadein(darken(@syntax-background-color, 15%), 100%);
   // @preview-bg: contrast(@syntax-text-color, @dark-preview-bg, @light-preview-bg, 43%);
-
-  // @button-bg: darken(@preview-bg, 10%);
-  // @button-fg: lighten(@preview-fg, 20%);
-  @button-bg: darken(@button-background-color, 15%);
-  @button-fg: lighten(@preview-fg, 20%);
 
   display: flex;
   flex-direction: row;
@@ -86,22 +67,41 @@ atom-text-editor::shadow {
     }
   }
 
+  .overlay {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    background: transparent;
+    box-shadow: none;
+    color: none;
+    border: none;
+    margin: 1px;
+    left: 0px;
+  }
+
   .math-element {
     visibility: hidden;
     transition: visibility 0s, opacity 200ms;
     // opacity: 0.2;
     position: relative;
 
-    .overlay {
-      width: 100%;
-      height: 100%;
-      position: absolute;
-      background: none;
-      border: none;
-      margin: 1px;
-      left: 0px;
+
+    svg {
+      background-color: rgba(0, 0, 0, 0);
     }
+    .MathJax_Display,
+    .MathJax_SVG_Display {
+      color: @input-background-color;
+      margin: 0;
+    }
+
+    .MathJax {
+      font-size: @font-size * 1.5
+    }
+
+
   }
+
   .loading {
     display: inline-block;
     visibility: visible;
@@ -130,17 +130,20 @@ atom-text-editor::shadow {
     .zoom-btns {
       margin-bottom: 0.5em;
       .btn {
-        width: 2.8em
+
+        margin-bottom: 0.0em;
       }
       .zoom-in {
-        border-top-right-radius: 3px;
         border-bottom-left-radius: 0px;
+        border-bottom-right-radius: 0px;
+        width: 2.5em;
       }
       .zoom-out {
         border-top-right-radius: 0px;
-        border-bottom-left-radius: 3px;
-        margin-left: 0px;
+        border-top-left-radius: 0px;
+        // padding-left: 1px;
         margin-top: -1px;
+        width: 2.5em;
       }
     }
 
@@ -156,20 +159,6 @@ atom-text-editor::shadow {
     min-width: 1.5em;
     // resize: both;
     // overflow: scroll;
-
-    .math-element {
-      // font-size: @font-size * 1.3
-    }
-
-    .MathJax_Display,
-    .MathJax_SVG_Display {
-      margin: 0;
-    }
-
-    .MathJax {
-      font-size: @font-size * 1.5
-    }
-
   }
 
   .loading,
