@@ -1,7 +1,7 @@
 {
   "name": "preview-inline",
   "main": "./lib/preview-inline",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "Inline preview of LaTeX maths and images in markdown files",
   "keywords": [
     "preview",
@@ -19,8 +19,7 @@
   "engines": {
     "atom": ">=1.6.0 <2.0.0"
   },
-  "dependencies": {
-  },
+  "dependencies": {},
   "devDependencies": {
     "eslint": "^3.7.0",
     "eslint-config-google": "^0.6.0"
