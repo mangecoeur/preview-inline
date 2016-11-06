@@ -1,3 +1,6 @@
+## 1.4.1
+- Added support for language-markdown math and image links
+
 ## 1.4.0
 - added force reload button to image view
 - now guesses file extension if not given in both markdown and latex - write the file name without the extension and it will attempt to find .jpg, .png. .gif, .svg files in that order
