@@ -30,15 +30,15 @@ $$
 $$
 
 
-![on buffer line](test-image.jpg)
+![Local image](test-image.jpg)
 
-![on buffer line](test-image)
+![Local image without extension](test-image)
 
 ![is an invalid image on line 31](05.jpg)
 
-![is an image url on line 11](http://imgs.xkcd.com/comics/the_martian.png)
+![Image url](http://imgs.xkcd.com/comics/the_martian.png)
 
-![psum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in](test-image.jpg)
+![Image on a wrapped line, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in](test-image.jpg)
 
 
 
