@@ -1,35 +1,42 @@
 {
-  "name": "preview-inline",
-  "main": "./lib/preview-inline",
-  "version": "1.4.5",
-  "description": "Inline preview of LaTeX maths and images in markdown files",
-  "keywords": [
-    "preview",
-    "math",
-    "image",
-    "markdown",
-    "latex",
-    "commonmark",
-    "inline",
-    "productivity",
-    "academic"
-  ],
-  "repository": "https://github.com/mangecoeur/preview-inline",
-  "license": "MIT",
-  "engines": {
-    "atom": ">=1.6.0 <2.0.0"
-  },
-  "dependencies": {},
-  "devDependencies": {
-    "eslint": "^3.7.0",
-    "eslint-config-google": "^0.6.0"
-  },
-  "line_endings": {
-    "value": "unix",
-    "level": "error"
-  },
-  "max_line_length": {
-    "value": 120,
-    "level": "warn"
-  }
+    "name": "preview-inline",
+    "main": "./lib/preview-inline",
+    "version": "1.4.5",
+    "description": "Inline preview of LaTeX maths and images in markdown files",
+    "keywords": [
+        "preview",
+        "math",
+        "image",
+        "markdown",
+        "latex",
+        "commonmark",
+        "inline",
+        "productivity",
+        "academic"
+    ],
+    "repository": "https://github.com/mangecoeur/preview-inline",
+    "license": "MIT",
+    "engines": {
+        "atom": ">=1.6.0 <2.0.0"
+    },
+    "dependencies": {},
+    "devDependencies": {
+        "eslint": "^3.7.0",
+        "eslint-config-google": "^0.6.0"
+    },
+    "line_endings": {
+        "value": "unix",
+        "level": "error"
+    },
+    "max_line_length": {
+        "value": 120,
+        "level": "warn"
+    },
+    "consumedServices": {
+        "bibliographicReferences": {
+            "versions": {
+                "1.0.0": "getReferences"
+            }
+        }
+    }
 }
