@@ -15,7 +15,6 @@ describe("ImageMarker", () => {
   let buffer;
 
   beforeEach(() => {
-
     let filePath = 'test.md';
 
     waitsForPromise(() => atom.packages.activatePackage('preview-inline'));
@@ -54,10 +53,10 @@ describe("ImageMarker", () => {
         .toEqual(path.join(__dirname, "test-image.jpg"));
     });
 
-    it("throws an error for absolute path of a file that doesn't exist", () => {
+    it("returns false for absolute path of a file that doesn't exist", () => {
       let imgPath = path.join(__dirname, "non-image.jpg");
       expect(() => ImageMarker.parseImageLocation(imgPath))
-        .toThrow(new Error(`no image ${imgPath}`));
+        .toEqual(false);
     });
 
     it("throws an error for a relative path of a file that doesn't exist", () => {
@@ -70,6 +69,19 @@ describe("ImageMarker", () => {
       let imgPath = "test-image.jpg";
       expect(() => ImageMarker.parseImageLocation(imgPath))
         .toThrow(new Error(`no image ${imgPath}`));
+    });
+  });
+
+  describe("ImageMarker::getBasePath", () => {
+    it("gets latex graphicspath", () => {
+      // TODO
+      // - create a text buffer including the graphics path
+      // - run basepath on buffer to get graphics path
+    });
+
+    it("gets the configured basepath", () => {
+      atom.config.set('preview-inline.imageBasePath', __dirname);
+      expect(ImageMarker.getBasePath(editor)).toEqual(__dirname);
     });
   });
 });
