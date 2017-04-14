@@ -1,3 +1,6 @@
+## 1.4.6
+- Fixed not working on first load under certain conditions
+
 ## 1.4.1
 - Added support for language-markdown math and image links
 
