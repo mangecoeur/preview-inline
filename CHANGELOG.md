@@ -1,3 +1,6 @@
+## 1.4.7
+- Allow triggering markdown image preview with cursor in image text
+
 ## 1.4.6
 - Fixed not working on first load under certain conditions
 
