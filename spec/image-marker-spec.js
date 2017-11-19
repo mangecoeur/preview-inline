@@ -18,7 +18,7 @@ describe("ImageMarker", () => {
     let filePath = 'test.md';
 
     waitsForPromise(() => atom.packages.activatePackage('preview-inline'));
-    waitsForPromise(() => atom.packages.activatePackage('language-pfm'));
+    waitsForPromise(() => atom.packages.activatePackage('language-markdown'));
 
     waitsForPromise(() =>
       atom.workspace.open(filePath).then(function(ed) {

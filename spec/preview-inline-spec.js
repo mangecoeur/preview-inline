@@ -16,7 +16,7 @@ describe("PreviewInline", () => {
     waitsForPromise(() => atom.packages.activatePackage('preview-inline'));
 
     // p = atom.packages.activatePackage('language-pfm')
-    waitsForPromise(() => atom.packages.activatePackage('language-pfm'));
+    waitsForPromise(() => atom.packages.activatePackage('language-markdown'));
 
     waitsForPromise(() =>
       atom.workspace.open(filePath).then(function(ed) {
