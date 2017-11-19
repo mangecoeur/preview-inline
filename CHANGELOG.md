@@ -1,3 +1,6 @@
+## 1.5.0
+- Allow preview of markdown citations if you have autocomplate-bibtex installed (or any compatible reference provider)
+
 ## 1.4.7
 - Allow triggering markdown image preview with cursor in image text
 
