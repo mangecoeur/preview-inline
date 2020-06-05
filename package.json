@@ -1,8 +1,8 @@
 {
   "name": "preview-inline",
   "main": "./lib/preview-inline",
-  "version": "1.5.1",
-  "description": "Inline preview of LaTeX maths and images in markdown files",
+  "version": "1.5.2",
+  "description": "Inline preview of LaTeX maths, TikZ and images in markdown files",
   "keywords": [
     "preview",
     "math",
@@ -20,8 +20,9 @@
     "atom": ">=1.22.0 <2.0.0"
   },
   "dependencies": {
+    "@atom/temp": "^0.8.4",
     "babel-preset-es2015": "^6.24.1",
-    "untildify": "^3.0.2"
+    "untildify": "^3.0.3"
   },
   "devDependencies": {
     "eslint": "^3.7.0",
